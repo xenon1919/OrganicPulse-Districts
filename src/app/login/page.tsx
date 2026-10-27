@@ -46,11 +46,14 @@ function LoginFlow() {
   const [hubs, setHubs] = useState<Hub[]>([]);
 
   useEffect(() => {
+    // Hubs require an authenticated read (see firestore.rules) and are only
+    // needed once we reach the post-OTP profile step.
+    if (step !== "profile") return;
     getHubs().then((list) => {
       setHubs(list);
       setHubId((current) => current || list[0]?.id || "");
     });
-  }, []);
+  }, [step]);
 
   const phoneE164 = `+91${phoneDigits}`;
 

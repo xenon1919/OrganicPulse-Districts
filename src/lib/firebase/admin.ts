@@ -31,6 +31,13 @@ function getAdminApp(): App {
   return app;
 }
 
+// This project's Firestore database has the literal ID "default" (no
+// parentheses) rather than the usual "(default)" - it was provisioned as a
+// Firestore Enterprise-edition database, which apparently uses that ID.
+// Confirmed via the REST API's databases.list; getFirestore() with no
+// database id (which assumes "(default)") returns NOT_FOUND for this project.
+const DATABASE_ID = "default";
+
 export function getAdminDb() {
-  return getFirestore(getAdminApp());
+  return getFirestore(getAdminApp(), DATABASE_ID);
 }

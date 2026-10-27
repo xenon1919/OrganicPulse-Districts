@@ -36,8 +36,13 @@ export function getAuthClient(): Auth {
   return authInstance;
 }
 
+// This project's Firestore database has the literal ID "default" (no
+// parentheses) rather than the usual "(default)" - see src/lib/firebase/admin.ts
+// for how this was diagnosed.
+const DATABASE_ID = "default";
+
 export function getDb(): Firestore {
-  if (!dbInstance) dbInstance = getFirestore(getFirebaseApp());
+  if (!dbInstance) dbInstance = getFirestore(getFirebaseApp(), DATABASE_ID);
   return dbInstance;
 }
 

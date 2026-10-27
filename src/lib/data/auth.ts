@@ -22,8 +22,17 @@ function getRecaptcha(containerId: string): RecaptchaVerifier {
 
 /** Sends an OTP to an E.164 phone number (e.g. "+919876543210"). */
 export async function sendOtp(phoneE164: string, recaptchaContainerId: string): Promise<ConfirmationResult> {
+  const client = getAuthClient();
+  // Headless/automated browsers (and some embedded webviews) can't complete
+  // reCAPTCHA's third-party storage access handshake and hang forever.
+  // Firebase's own escape hatch for this - paired with a Console-configured
+  // test phone number - skips reCAPTCHA entirely. Non-production only, so
+  // the real deployed app keeps reCAPTCHA protection.
+  if (process.env.NODE_ENV !== "production") {
+    client.settings.appVerificationDisabledForTesting = true;
+  }
   const verifier = getRecaptcha(recaptchaContainerId);
-  return signInWithPhoneNumber(getAuthClient(), phoneE164, verifier);
+  return signInWithPhoneNumber(client, phoneE164, verifier);
 }
 
 /** Confirms the OTP and completes sign-in. Returns the Firebase uid. */

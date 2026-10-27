@@ -51,14 +51,12 @@ export async function getHubs(): Promise<Hub[]> {
     return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Hub);
   }
 
-  // Self-seed on first run so there's no manual setup step.
-  const seeded: Hub[] = [];
-  for (const hub of DEFAULT_HUBS) {
-    const hubRef = doc(collection(db, "hubs"));
-    await setDoc(hubRef, hub);
-    seeded.push({ id: hubRef.id, ...hub });
-  }
-  return seeded;
+  // Hubs are normally seeded once via the Admin SDK (scripts/seed-hubs.mjs) -
+  // firestore.rules intentionally blocks client writes to this collection.
+  // This is a last-resort in-memory fallback so the hub picker never renders
+  // empty if that seeding step was skipped; it does not persist anything.
+  console.warn("No hubs found in Firestore - falling back to an in-memory default list. Run scripts/seed-hubs.mjs.");
+  return DEFAULT_HUBS.map((hub, i) => ({ id: `local-fallback-${i}`, ...hub }));
 }
 
 export async function getHub(hubId: string | null): Promise<Hub | null> {
