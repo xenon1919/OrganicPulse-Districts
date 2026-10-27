@@ -40,7 +40,7 @@ export default function HouseholdHomePage() {
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1">
         <p className="text-sm text-muted-foreground">Welcome back,</p>
-        <h1 className="font-display text-xl font-bold">{profile.name}</h1>
+        <h1 className="font-display text-xl font-extrabold">{profile.name}</h1>
         {hubName && <p className="text-xs text-muted-foreground">{hubName}</p>}
       </div>
 
@@ -54,7 +54,7 @@ export default function HouseholdHomePage() {
             {stats.tier}
           </span>
         </div>
-        <span className="tabular-stat font-display text-3xl font-bold">{stats.points}</span>
+        <span className="tabular-stat font-display text-3xl font-black">{stats.points}</span>
         <div className="flex flex-col gap-1.5">
           <Progress value={progressPct} className="h-1.5" />
           <p className="text-xs text-muted-foreground">
@@ -66,12 +66,12 @@ export default function HouseholdHomePage() {
       <div className="grid grid-cols-2 gap-3">
         <Card className="flex flex-col gap-1.5 p-4">
           <TreeDeciduous className="h-4 w-4 text-accent" />
-          <span className="tabular-stat font-display text-2xl font-bold">{stats.carbonSavedKgThisMonth}</span>
+          <span className="tabular-stat font-display text-2xl font-black">{stats.carbonSavedKgThisMonth}</span>
           <span className="text-xs leading-snug text-muted-foreground">kg CO2e saved this month</span>
         </Card>
         <Card className="flex flex-col gap-1.5 p-4">
           <Leaf className="h-4 w-4 text-primary" />
-          <span className="tabular-stat font-display text-2xl font-bold">{stats.collectionsCount}</span>
+          <span className="tabular-stat font-display text-2xl font-black">{stats.collectionsCount}</span>
           <span className="text-xs leading-snug text-muted-foreground">collections logged all-time</span>
         </Card>
       </div>

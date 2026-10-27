@@ -52,7 +52,7 @@ export default function MarketplacePage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h1 className="font-display text-xl font-bold">Resource marketplace</h1>
+        <h1 className="font-display text-xl font-extrabold">Resource marketplace</h1>
         <p className="text-sm text-muted-foreground">Live inventory from nearby hubs.</p>
       </div>
 
@@ -74,7 +74,7 @@ export default function MarketplacePage() {
                   <MapPin className="h-3 w-3" /> {l.hubName}
                 </span>
               </div>
-              <span className="font-display tabular-stat text-lg font-bold">{l.availableKg}kg</span>
+              <span className="font-display tabular-stat text-lg font-black">{l.availableKg}kg</span>
             </div>
             <Button size="sm" onClick={() => handleClaim(l.batchId)} disabled={claimingId === l.batchId}>
               {claimingId === l.batchId ? "Claiming..." : "Claim"}

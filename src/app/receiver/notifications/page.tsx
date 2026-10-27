@@ -52,7 +52,7 @@ export default function NotificationsPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h1 className="font-display text-xl font-bold">Matches</h1>
+        <h1 className="font-display text-xl font-extrabold">Matches</h1>
         <p className="text-sm text-muted-foreground">Proposed by the matching agent as inventory comes in.</p>
       </div>
 
@@ -69,7 +69,7 @@ export default function NotificationsPage() {
           <Card key={m.matchId} className="flex flex-col gap-3 p-4">
             <div className="flex items-start justify-between gap-3">
               <CategoryBadge category={m.category} />
-              <span className="font-display tabular-stat text-lg font-bold">{m.availableKg}kg</span>
+              <span className="font-display tabular-stat text-lg font-black">{m.availableKg}kg</span>
             </div>
             <span className="text-xs text-muted-foreground">{m.hubName}</span>
 

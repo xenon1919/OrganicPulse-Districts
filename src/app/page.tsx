@@ -39,7 +39,7 @@ export default function Home() {
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15">
             <Leaf className="h-7 w-7 text-primary" />
           </div>
-          <h1 className="font-display text-2xl font-bold tracking-tight">
+          <h1 className="font-display text-2xl font-extrabold tracking-tight">
             OrganicPulse Districts
           </h1>
           <p className="text-sm leading-relaxed text-muted-foreground">
@@ -56,7 +56,7 @@ export default function Home() {
                   <Icon className={`h-5 w-5 ${accent}`} />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="font-display text-sm font-semibold">{title}</span>
+                  <span className="font-display text-sm font-bold">{title}</span>
                   <span className="text-xs leading-snug text-muted-foreground">
                     {description}
                   </span>

@@ -30,7 +30,7 @@ export default function PartnerHistoryPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="font-display text-xl font-bold">Collection history</h1>
+      <h1 className="font-display text-xl font-extrabold">Collection history</h1>
 
       {collections.length === 0 && (
         <EmptyState

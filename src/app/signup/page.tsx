@@ -59,7 +59,7 @@ function SignupForm() {
       </div>
       <Card className="flex w-full max-w-sm flex-col gap-6 p-6">
         <div className="flex flex-col gap-1">
-          <h1 className="font-display text-xl font-bold">Create account</h1>
+          <h1 className="font-display text-xl font-extrabold">Create account</h1>
           <p className="text-sm text-muted-foreground">Pick a role to get started.</p>
         </div>
 
