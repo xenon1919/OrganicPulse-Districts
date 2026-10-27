@@ -9,14 +9,14 @@ import { LoadingState } from "@/components/app/loading-state";
 import { CATEGORY_META } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
 import { getCaddyDeclaration, tapCategory, attachCaddyPhoto } from "@/lib/data/household";
-import type { MockCaddyDeclaration } from "@/lib/mock/store";
-import type { Category } from "@/types/database";
+import type { CaddyDeclaration, Category } from "@/types/database";
 
 const CATEGORIES: Category[] = ["A", "B", "C"];
 
 export default function LogCollectionPage() {
   const { profile, loading } = useRequiredProfile("household");
-  const [decl, setDecl] = useState<MockCaddyDeclaration | null>(null);
+  const [decl, setDecl] = useState<CaddyDeclaration | null>(null);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -35,13 +35,14 @@ export default function LogCollectionPage() {
     if (!profile) return;
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const updated = await attachCaddyPhoto(profile.id, reader.result as string);
+    setUploading(true);
+    try {
+      const updated = await attachCaddyPhoto(profile.id, file);
       setDecl(updated);
       toast.success("Photo attached—used to verify your drop-off on collection day.");
-    };
-    reader.readAsDataURL(file);
+    } finally {
+      setUploading(false);
+    }
   }
 
   if (loading || !profile || !decl) {
@@ -56,9 +57,9 @@ export default function LogCollectionPage() {
   }
 
   const weights: Record<Category, number> = {
-    A: decl.category_a_kg,
-    B: decl.category_b_kg,
-    C: decl.category_c_kg,
+    A: decl.categoryAKg,
+    B: decl.categoryBKg,
+    C: decl.categoryCKg,
   };
   const total = weights.A + weights.B + weights.C;
 
@@ -97,16 +98,17 @@ export default function LogCollectionPage() {
           <span className="text-sm font-medium">Caddy photo</span>
           <span className="text-xs text-muted-foreground">Optional, speeds up verification</span>
         </div>
-        {decl.photo_url ? (
+        {decl.photoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={decl.photo_url} alt="Caddy contents" className="h-40 w-full rounded-lg object-cover" />
+          <img src={decl.photoUrl} alt="Caddy contents" className="h-40 w-full rounded-lg object-cover" />
         ) : (
           <button
             onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
             className="flex h-32 w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border text-muted-foreground"
           >
             <Camera className="h-6 w-6" />
-            <span className="text-xs">Attach a photo of your caddy</span>
+            <span className="text-xs">{uploading ? "Uploading…" : "Attach a photo of your caddy"}</span>
           </button>
         )}
         <input
@@ -117,7 +119,7 @@ export default function LogCollectionPage() {
           className="hidden"
           onChange={handlePhoto}
         />
-        {decl.photo_url && (
+        {decl.photoUrl && !uploading && (
           <button onClick={() => fileInputRef.current?.click()} className="text-xs font-medium text-accent">
             Retake photo
           </button>

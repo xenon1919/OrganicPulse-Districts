@@ -1,6 +1,18 @@
-import { withDb } from "@/lib/mock/store";
-import type { MockCaddyDeclaration, MockCollection, MockHub } from "@/lib/mock/store";
-import type { Category } from "@/types/database";
+"use client";
+
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+  orderBy,
+} from "firebase/firestore";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getDb, getStorageClient } from "@/lib/firebase/client";
+import type { CaddyDeclaration, Category, Collection, Hub } from "@/types/database";
 
 const TIERS = [
   { name: "Sprout", min: 0 },
@@ -27,92 +39,113 @@ export function tierForPoints(points: number): { name: string; next: { name: str
 // avoidance + offset synthetic-input production). Illustrative, not audited.
 const CARBON_SAVED_PER_KG = 0.42;
 
-export async function getHubs(): Promise<MockHub[]> {
-  return withDb((db) => db.hubs);
+const DEFAULT_HUBS: Omit<Hub, "id">[] = [
+  { name: "Malkajgiri Hub", neighborhood: "Malkajgiri", lat: 17.4556, lng: 78.5199 },
+  { name: "Kompally Hub", neighborhood: "Kompally", lat: 17.5406, lng: 78.4898 },
+];
+
+export async function getHubs(): Promise<Hub[]> {
+  const db = getDb();
+  const snap = await getDocs(collection(db, "hubs"));
+  if (!snap.empty) {
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Hub);
+  }
+
+  // Self-seed on first run so there's no manual setup step.
+  const seeded: Hub[] = [];
+  for (const hub of DEFAULT_HUBS) {
+    const hubRef = doc(collection(db, "hubs"));
+    await setDoc(hubRef, hub);
+    seeded.push({ id: hubRef.id, ...hub });
+  }
+  return seeded;
 }
 
-export async function getHub(hubId: string | null): Promise<MockHub | null> {
+export async function getHub(hubId: string | null): Promise<Hub | null> {
   if (!hubId) return null;
-  return withDb((db) => db.hubs.find((h) => h.id === hubId) ?? null);
+  const snap = await getDoc(doc(getDb(), "hubs", hubId));
+  return snap.exists() ? ({ id: snap.id, ...snap.data() } as Hub) : null;
 }
 
-export async function getCollectionHistory(householdId: string): Promise<MockCollection[]> {
-  return withDb((db) =>
-    db.collections
-      .filter((c) => c.household_id === householdId)
-      .sort((a, b) => +new Date(b.collected_at) - +new Date(a.collected_at))
+export async function getCollectionHistory(householdId: string): Promise<Collection[]> {
+  const q = query(
+    collection(getDb(), "collections"),
+    where("householdId", "==", householdId),
+    orderBy("collectedAt", "desc")
   );
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Collection);
 }
 
 export async function getImpactStats(householdId: string) {
-  return withDb((db) => {
-    const profile = db.profiles.find((p) => p.id === householdId);
-    const collections = db.collections.filter((c) => c.household_id === householdId);
-    const monthAgo = Date.now() - 1000 * 60 * 60 * 24 * 30;
-    const recentKg = collections
-      .filter((c) => +new Date(c.collected_at) >= monthAgo)
-      .reduce((sum, c) => sum + c.category_a_kg + c.category_b_kg + c.category_c_kg, 0);
+  const [profileSnap, collections] = await Promise.all([
+    getDoc(doc(getDb(), "users", householdId)),
+    getCollectionHistory(householdId),
+  ]);
 
-    const tier = tierForPoints(profile?.green_points ?? 0);
+  const points = profileSnap.exists() ? (profileSnap.data().greenPoints ?? 0) : 0;
+  const monthAgo = Date.now() - 1000 * 60 * 60 * 24 * 30;
+  const recentKg = collections
+    .filter((c) => +new Date(c.collectedAt) >= monthAgo)
+    .reduce((sum, c) => sum + c.categoryAKg + c.categoryBKg + c.categoryCKg, 0);
 
-    return {
-      points: profile?.green_points ?? 0,
-      tier: tier.name,
-      nextTier: tier.next,
-      collectionsCount: collections.length,
-      carbonSavedKgThisMonth: +(recentKg * CARBON_SAVED_PER_KG).toFixed(2),
-    };
-  });
+  const tier = tierForPoints(points);
+
+  return {
+    points,
+    tier: tier.name,
+    nextTier: tier.next,
+    collectionsCount: collections.length,
+    carbonSavedKgThisMonth: +(recentKg * CARBON_SAVED_PER_KG).toFixed(2),
+  };
 }
 
-export async function getCaddyDeclaration(householdId: string): Promise<MockCaddyDeclaration> {
-  return withDb((db) => {
-    const existing = db.caddy_declarations.find((c) => c.household_id === householdId);
-    if (existing) return existing;
-    const fresh: MockCaddyDeclaration = {
-      household_id: householdId,
-      category_a_kg: 0,
-      category_b_kg: 0,
-      category_c_kg: 0,
-      photo_url: null,
-      updated_at: new Date().toISOString(),
-    };
-    db.caddy_declarations.push(fresh);
-    return fresh;
-  });
+function emptyDeclaration(householdId: string): CaddyDeclaration {
+  return {
+    householdId,
+    categoryAKg: 0,
+    categoryBKg: 0,
+    categoryCKg: 0,
+    photoUrl: null,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export async function getCaddyDeclaration(householdId: string): Promise<CaddyDeclaration> {
+  const snap = await getDoc(doc(getDb(), "caddyDeclarations", householdId));
+  return snap.exists() ? (snap.data() as CaddyDeclaration) : emptyDeclaration(householdId);
 }
 
 const TAP_INCREMENT_KG = 0.1;
+const CATEGORY_FIELD = { A: "categoryAKg", B: "categoryBKg", C: "categoryCKg" } as const;
 
-export async function tapCategory(householdId: string, category: Category): Promise<MockCaddyDeclaration> {
-  return withDb((db) => {
-    let decl = db.caddy_declarations.find((c) => c.household_id === householdId);
-    if (!decl) {
-      decl = {
-        household_id: householdId,
-        category_a_kg: 0,
-        category_b_kg: 0,
-        category_c_kg: 0,
-        photo_url: null,
-        updated_at: new Date().toISOString(),
-      };
-      db.caddy_declarations.push(decl);
-    }
-    const key = (
-      { A: "category_a_kg", B: "category_b_kg", C: "category_c_kg" } as const
-    )[category];
-    decl[key] = +(decl[key] + TAP_INCREMENT_KG).toFixed(2);
-    decl.updated_at = new Date().toISOString();
-    return decl;
-  });
+export async function tapCategory(householdId: string, category: Category): Promise<CaddyDeclaration> {
+  const ref = doc(getDb(), "caddyDeclarations", householdId);
+  const snap = await getDoc(ref);
+  const current = snap.exists() ? (snap.data() as CaddyDeclaration) : emptyDeclaration(householdId);
+
+  const key = CATEGORY_FIELD[category];
+  const updated: CaddyDeclaration = {
+    ...current,
+    householdId,
+    [key]: +(current[key] + TAP_INCREMENT_KG).toFixed(2),
+    updatedAt: new Date().toISOString(),
+  };
+
+  await setDoc(ref, updated);
+  return updated;
 }
 
-export async function attachCaddyPhoto(householdId: string, photoDataUrl: string): Promise<MockCaddyDeclaration> {
-  return withDb((db) => {
-    const decl = db.caddy_declarations.find((c) => c.household_id === householdId);
-    if (!decl) throw new Error("No caddy declaration to attach a photo to yet.");
-    decl.photo_url = photoDataUrl;
-    decl.updated_at = new Date().toISOString();
-    return decl;
-  });
+export async function attachCaddyPhoto(householdId: string, file: File): Promise<CaddyDeclaration> {
+  const photoRef = storageRef(getStorageClient(), `caddy-photos/${householdId}/${Date.now()}-${file.name}`);
+  await uploadBytes(photoRef, file);
+  const photoUrl = await getDownloadURL(photoRef);
+
+  const docRef = doc(getDb(), "caddyDeclarations", householdId);
+  const snap = await getDoc(docRef);
+  const current = snap.exists() ? (snap.data() as CaddyDeclaration) : emptyDeclaration(householdId);
+  const updated: CaddyDeclaration = { ...current, householdId, photoUrl, updatedAt: new Date().toISOString() };
+
+  await setDoc(docRef, updated);
+  return updated;
 }

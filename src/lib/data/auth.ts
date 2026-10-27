@@ -1,55 +1,73 @@
 "use client";
 
-import { getSession, setSession, clearSession } from "@/lib/mock/session";
-import { withDb, uid } from "@/lib/mock/store";
-import type { MockProfile } from "@/lib/mock/store";
-import type { ProfileRole, ReceiverType } from "@/types/database";
+import {
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  signOut,
+  type ConfirmationResult,
+} from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { getAuthClient, getDb } from "@/lib/firebase/client";
+import { getHub } from "@/lib/data/household";
+import type { ProfileRole, ReceiverType, UserProfile } from "@/types/database";
 
-/**
- * TODO: swap for Supabase Auth (src/lib/supabase/client.ts) + a `profiles`
- * insert once the project is wired up. Signatures are kept close to what
- * that will look like so call sites barely change.
- */
-export async function getCurrentProfile(): Promise<MockProfile | null> {
-  const id = getSession();
-  if (!id) return null;
-  return withDb((db) => db.profiles.find((p) => p.id === id) ?? null);
+let recaptchaVerifier: RecaptchaVerifier | null = null;
+
+function getRecaptcha(containerId: string): RecaptchaVerifier {
+  if (!recaptchaVerifier) {
+    recaptchaVerifier = new RecaptchaVerifier(getAuthClient(), containerId, { size: "invisible" });
+  }
+  return recaptchaVerifier;
 }
 
-export async function signUp(input: {
+/** Sends an OTP to an E.164 phone number (e.g. "+919876543210"). */
+export async function sendOtp(phoneE164: string, recaptchaContainerId: string): Promise<ConfirmationResult> {
+  const verifier = getRecaptcha(recaptchaContainerId);
+  return signInWithPhoneNumber(getAuthClient(), phoneE164, verifier);
+}
+
+/** Confirms the OTP and completes sign-in. Returns the Firebase uid. */
+export async function confirmOtp(confirmation: ConfirmationResult, code: string): Promise<string> {
+  const result = await confirmation.confirm(code);
+  return result.user.uid;
+}
+
+export async function getUserProfile(uid: string): Promise<UserProfile | null> {
+  const snap = await getDoc(doc(getDb(), "users", uid));
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() } as UserProfile;
+}
+
+export async function completeProfile(input: {
+  uid: string;
   role: ProfileRole;
   name: string;
+  phone: string;
+  address: string;
+  pincode: string;
   hubId: string;
   receiverType?: ReceiverType;
-}): Promise<MockProfile> {
-  const profile = withDb((db) => {
-    const created: MockProfile = {
-      id: uid("user"),
-      role: input.role,
-      name: input.name,
-      hub_id: input.hubId,
-      receiver_type: input.receiverType ?? null,
-      green_points: 0,
-      tier: "Sprout",
-      created_at: new Date().toISOString(),
-    };
-    db.profiles.push(created);
-    return created;
-  });
-  setSession(profile.id);
-  return profile;
+}): Promise<UserProfile> {
+  const hub = await getHub(input.hubId);
+
+  const profile: Omit<UserProfile, "id"> = {
+    role: input.role,
+    name: input.name,
+    phone: input.phone,
+    address: input.address,
+    pincode: input.pincode,
+    hubId: input.hubId,
+    hubName: hub?.name ?? null,
+    receiverType: input.role === "receiver" ? (input.receiverType ?? "manufacturer") : null,
+    greenPoints: 0,
+    tier: "Sprout",
+    createdAt: new Date().toISOString(),
+  };
+
+  await setDoc(doc(getDb(), "users", input.uid), profile);
+  return { id: input.uid, ...profile };
 }
 
-export async function logIn(profileId: string): Promise<MockProfile | null> {
-  const profile = withDb((db) => db.profiles.find((p) => p.id === profileId) ?? null);
-  if (profile) setSession(profile.id);
-  return profile;
-}
-
-export async function logOut() {
-  clearSession();
-}
-
-export async function listDemoProfiles(): Promise<MockProfile[]> {
-  return withDb((db) => db.profiles);
+export async function logOut(): Promise<void> {
+  await signOut(getAuthClient());
 }

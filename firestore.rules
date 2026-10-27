@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Hubs and inventory are shared reference/marketplace data - any signed-in
+    // user can read them. Writes to inventory happen only via the Admin SDK
+    // (the /api/collections route), except the narrow "claim" update below.
+    match /hubs/{hubId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /inventoryBatches/{batchId} {
+      allow read: if signedIn();
+      allow create: if false;
+      // Claiming: a receiver may only flip an open batch to claimed.
+      allow update: if signedIn()
+        && resource.data.status == 'open'
+        && request.resource.data.status == 'claimed'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      allow delete: if false;
+    }
+
+    // Profiles: readable by any signed-in user (names are shown across the
+    // app - QR lookup, collection history, match cards), writable only by
+    // their owner. Green points are only ever changed by the Admin SDK.
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.auth.uid == uid;
+      allow update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.greenPoints == resource.data.greenPoints;
+      allow delete: if false;
+    }
+
+    // Any signed-in user can read (a partner looks up a household's pending
+    // caddy directly after a QR scan); only the household can write their own.
+    match /caddyDeclarations/{uid} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Collections and the points ledger are only ever written by the
+    // privileged API route (Admin SDK bypasses rules entirely).
+    match /collections/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /greenPointsLedger/{id} {
+      allow read: if signedIn() && resource.data.householdId == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /demandRequests/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.receiverId == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.receiverId == request.auth.uid;
+    }
+
+    // Matches: the Admin SDK creates agent-proposed matches; a receiver may
+    // create a direct marketplace claim for themselves, and may only update
+    // their own match's status.
+    match /matches/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.receiverId == request.auth.uid;
+      allow update: if signedIn() && resource.data.receiverId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      allow delete: if false;
+    }
+  }
+}

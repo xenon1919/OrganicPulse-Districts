@@ -9,15 +9,15 @@ import { EmptyState } from "@/components/app/empty-state";
 import { CategoryBadge } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
 import { listCollectionsAtHub } from "@/lib/data/partner";
-import type { MockCollection } from "@/lib/mock/store";
+import type { Collection } from "@/types/database";
 
 export default function PartnerHistoryPage() {
   const { profile, loading } = useRequiredProfile("partner");
-  const [collections, setCollections] = useState<(MockCollection & { householdName: string })[] | null>(null);
+  const [collections, setCollections] = useState<Collection[] | null>(null);
 
   useEffect(() => {
-    if (!profile?.hub_id) return;
-    listCollectionsAtHub(profile.hub_id).then(setCollections);
+    if (!profile?.hubId) return;
+    listCollectionsAtHub(profile.hubId).then(setCollections);
   }, [profile]);
 
   if (loading || !profile || !collections) {
@@ -46,17 +46,17 @@ export default function PartnerHistoryPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">{c.householdName}</span>
               <span className="text-xs text-muted-foreground">
-                {new Date(c.collected_at).toLocaleDateString()}
+                {new Date(c.collectedAt).toLocaleDateString()}
               </span>
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {c.category_a_kg > 0 && <CategoryBadge category="A" />}
-              {c.category_b_kg > 0 && <CategoryBadge category="B" />}
-              {c.category_c_kg > 0 && <CategoryBadge category="C" />}
+              {c.categoryAKg > 0 && <CategoryBadge category="A" />}
+              {c.categoryBKg > 0 && <CategoryBadge category="B" />}
+              {c.categoryCKg > 0 && <CategoryBadge category="C" />}
             </div>
             <span className="text-xs text-muted-foreground">
-              {(c.category_a_kg + c.category_b_kg + c.category_c_kg).toFixed(1)}kg total
-              {c.sam_verification?.mismatch ? "—flagged for recheck" : ""}
+              {(c.categoryAKg + c.categoryBKg + c.categoryCKg).toFixed(1)}kg total
+              {c.samVerification?.mismatch ? "—flagged for recheck" : ""}
             </span>
           </Card>
         ))}

@@ -50,7 +50,7 @@ export default function Home() {
 
         <div className="flex flex-col gap-3">
           {portals.map(({ role, title, description, icon: Icon, accent }) => (
-            <Link key={role} href={`/signup?role=${role}`}>
+            <Link key={role} href={`/login?role=${role}`}>
               <Card className="flex flex-row items-center gap-4 p-4 transition-colors hover:border-accent/50">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted">
                   <Icon className={`h-5 w-5 ${accent}`} />

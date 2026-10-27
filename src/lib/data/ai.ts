@@ -1,11 +1,4 @@
-import type { Category } from "@/types/database";
-
-export interface SamVerification {
-  estimated: Record<Category, number>;
-  confidence: number;
-  mismatch: boolean;
-  note: string;
-}
+import type { Category, SamVerification } from "@/types/database";
 
 export interface MatchRationale {
   rationale: string;

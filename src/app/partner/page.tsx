@@ -13,8 +13,7 @@ import { QrScanner } from "@/components/app/qr-scanner";
 import { CATEGORY_META } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
 import { findHouseholdByQr, getPendingCaddyFor, recordCollection } from "@/lib/data/partner";
-import type { MockProfile, MockCaddyDeclaration } from "@/lib/mock/store";
-import type { SamVerification } from "@/lib/data/ai";
+import type { CaddyDeclaration, SamVerification, UserProfile } from "@/types/database";
 
 function ManualEntry({ onSubmit }: { onSubmit: (payload: string) => void }) {
   const [value, setValue] = useState("");
@@ -42,7 +41,7 @@ function ManualEntry({ onSubmit }: { onSubmit: (payload: string) => void }) {
 
 type Stage =
   | { step: "scanning" }
-  | { step: "review"; household: MockProfile; pending: MockCaddyDeclaration | null }
+  | { step: "review"; household: UserProfile; pending: CaddyDeclaration | null }
   | { step: "done"; pointsAwarded: number; sam: SamVerification };
 
 export default function PartnerScanPage() {
@@ -59,9 +58,9 @@ export default function PartnerScanPage() {
     }
     const pending = await getPendingCaddyFor(household.id);
     setWeights({
-      A: (pending?.category_a_kg ?? 0).toFixed(1),
-      B: (pending?.category_b_kg ?? 0).toFixed(1),
-      C: (pending?.category_c_kg ?? 0).toFixed(1),
+      A: (pending?.categoryAKg ?? 0).toFixed(1),
+      B: (pending?.categoryBKg ?? 0).toFixed(1),
+      C: (pending?.categoryCKg ?? 0).toFixed(1),
     });
     setStage({ step: "review", household, pending: pending ?? null });
   }
@@ -72,11 +71,11 @@ export default function PartnerScanPage() {
     const { pointsAwarded, collection } = await recordCollection({
       partnerId: profile.id,
       householdId: stage.household.id,
-      hubId: profile.hub_id ?? stage.household.hub_id ?? "",
+      hubId: profile.hubId ?? stage.household.hubId ?? "",
       weights: { A: Number(weights.A) || 0, B: Number(weights.B) || 0, C: Number(weights.C) || 0 },
     });
     setSubmitting(false);
-    setStage({ step: "done", pointsAwarded, sam: collection.sam_verification! });
+    setStage({ step: "done", pointsAwarded, sam: collection.samVerification! });
   }
 
   function resetToScan() {

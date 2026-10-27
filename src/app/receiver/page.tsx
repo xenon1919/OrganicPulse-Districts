@@ -10,33 +10,22 @@ import { LoadingState } from "@/components/app/loading-state";
 import { EmptyState } from "@/components/app/empty-state";
 import { CategoryBadge } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
-import { listInventory, claimBatchDirectly, type InventoryListing } from "@/lib/data/receiver";
+import { subscribeToInventory, claimBatchDirectly, type InventoryListing } from "@/lib/data/receiver";
 
 export default function MarketplacePage() {
   const { profile, loading } = useRequiredProfile("receiver");
   const [listings, setListings] = useState<InventoryListing[] | null>(null);
   const [claimingId, setClaimingId] = useState<string | null>(null);
 
-  async function refresh() {
-    setListings(await listInventory());
-  }
-
   useEffect(() => {
     if (!profile) return;
-    let active = true;
-    listInventory().then((data) => {
-      if (active) setListings(data);
-    });
-    return () => {
-      active = false;
-    };
+    return subscribeToInventory(setListings);
   }, [profile]);
 
   async function handleClaim(batchId: string) {
     if (!profile) return;
     setClaimingId(batchId);
-    await claimBatchDirectly(batchId, profile.id);
-    await refresh();
+    await claimBatchDirectly(batchId, profile.id, profile.name);
     setClaimingId(null);
     toast.success("Claimed—arrange pickup from the hub.");
   }

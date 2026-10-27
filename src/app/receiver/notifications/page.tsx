@@ -10,33 +10,22 @@ import { LoadingState } from "@/components/app/loading-state";
 import { EmptyState } from "@/components/app/empty-state";
 import { CategoryBadge } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
-import { listMatchesForReceiver, claimMatch, type MatchNotification } from "@/lib/data/receiver";
+import { subscribeToMatchesForReceiver, claimMatch, type MatchNotification } from "@/lib/data/receiver";
 
 export default function NotificationsPage() {
   const { profile, loading } = useRequiredProfile("receiver");
   const [matches, setMatches] = useState<MatchNotification[] | null>(null);
   const [claimingId, setClaimingId] = useState<string | null>(null);
 
-  async function refresh(id: string) {
-    setMatches(await listMatchesForReceiver(id));
-  }
-
   useEffect(() => {
     if (!profile) return;
-    let active = true;
-    listMatchesForReceiver(profile.id).then((data) => {
-      if (active) setMatches(data);
-    });
-    return () => {
-      active = false;
-    };
+    return subscribeToMatchesForReceiver(profile.id, setMatches);
   }, [profile]);
 
   async function handleClaim(matchId: string) {
     if (!profile) return;
     setClaimingId(matchId);
     await claimMatch(matchId);
-    await refresh(profile.id);
     setClaimingId(null);
     toast.success("Claimed—arrange pickup from the hub.");
   }

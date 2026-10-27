@@ -2,24 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentProfile } from "@/lib/data/auth";
-import type { MockProfile } from "@/lib/mock/store";
-import type { ProfileRole } from "@/types/database";
+import { onAuthStateChanged } from "firebase/auth";
+import { getAuthClient } from "@/lib/firebase/client";
+import { getUserProfile } from "@/lib/data/auth";
+import type { UserProfile, ProfileRole } from "@/types/database";
 
 /**
- * Loads the current mock session's profile and redirects to /login if it's
- * missing or the wrong role. TODO: once Supabase Auth is wired up, this
- * becomes a thin wrapper over `supabase.auth.getUser()` + a profiles select.
+ * Subscribes to Firebase Auth state, loads the matching Firestore profile,
+ * and redirects to /login if there's no session or the role doesn't match.
  */
 export function useRequiredProfile(role: ProfileRole) {
   const router = useRouter();
-  const [profile, setProfile] = useState<MockProfile | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
-    getCurrentProfile().then((p) => {
-      if (!active) return;
+    const unsubscribe = onAuthStateChanged(getAuthClient(), async (user) => {
+      if (!user) {
+        router.replace("/login");
+        return;
+      }
+      const p = await getUserProfile(user.uid);
       if (!p || p.role !== role) {
         router.replace("/login");
         return;
@@ -27,9 +30,7 @@ export function useRequiredProfile(role: ProfileRole) {
       setProfile(p);
       setLoading(false);
     });
-    return () => {
-      active = false;
-    };
+    return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role]);
 

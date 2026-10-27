@@ -7,17 +7,15 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingState } from "@/components/app/loading-state";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
-import { getImpactStats, getHub } from "@/lib/data/household";
+import { getImpactStats } from "@/lib/data/household";
 
 export default function HouseholdHomePage() {
   const { profile, loading } = useRequiredProfile("household");
   const [stats, setStats] = useState<Awaited<ReturnType<typeof getImpactStats>> | null>(null);
-  const [hubName, setHubName] = useState<string | null>(null);
 
   useEffect(() => {
     if (!profile) return;
     getImpactStats(profile.id).then(setStats);
-    getHub(profile.hub_id).then((h) => setHubName(h?.name ?? null));
   }, [profile]);
 
   if (loading || !profile || !stats) {
@@ -41,7 +39,7 @@ export default function HouseholdHomePage() {
       <div className="flex flex-col gap-1">
         <p className="text-sm text-muted-foreground">Welcome back,</p>
         <h1 className="font-display text-xl font-extrabold">{profile.name}</h1>
-        {hubName && <p className="text-xs text-muted-foreground">{hubName}</p>}
+        {profile.hubName && <p className="text-xs text-muted-foreground">{profile.hubName}</p>}
       </div>
 
       <Card className="flex flex-col gap-3 bg-primary/10 p-5">
