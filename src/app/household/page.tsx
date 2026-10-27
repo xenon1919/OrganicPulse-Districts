@@ -37,32 +37,26 @@ export default function HouseholdHomePage() {
     : 100;
 
   return (
-    <div className="relative flex flex-col gap-5">
-      <div className="glow-blob -top-10 -left-10 h-56 w-56 bg-primary/20" />
-      <div className="glow-blob top-32 -right-16 h-48 w-48 bg-accent/15" />
-
-      <div className="relative flex flex-col gap-1">
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-1">
         <p className="text-sm text-muted-foreground">Welcome back,</p>
         <h1 className="font-display text-xl font-bold">{profile.name}</h1>
         {hubName && <p className="text-xs text-muted-foreground">{hubName}</p>}
       </div>
 
-      <Card className="relative flex flex-col gap-3 overflow-hidden border-primary/25 bg-gradient-to-br from-primary/18 via-primary/6 to-transparent p-5 shadow-[0_20px_44px_-24px] shadow-primary/40">
+      <Card className="flex flex-col gap-3 bg-primary/10 p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium">Green Points</span>
           </div>
-          <span className="rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">
+          <span className="rounded-full bg-primary/20 px-2.5 py-0.5 text-xs font-medium text-primary">
             {stats.tier}
           </span>
         </div>
-        <span className="tabular-stat font-display text-4xl font-bold text-primary">{stats.points}</span>
+        <span className="tabular-stat font-display text-3xl font-bold">{stats.points}</span>
         <div className="flex flex-col gap-1.5">
-          <Progress
-            value={progressPct}
-            className="h-1.5 [&_[data-slot=progress-indicator]]:!bg-gradient-to-r [&_[data-slot=progress-indicator]]:!from-primary [&_[data-slot=progress-indicator]]:!to-accent"
-          />
+          <Progress value={progressPct} className="h-1.5" />
           <p className="text-xs text-muted-foreground">
             {stats.nextTier ? `${stats.nextTier.pointsAway} points to ${stats.nextTier.name}` : "Highest tier reached"}
           </p>

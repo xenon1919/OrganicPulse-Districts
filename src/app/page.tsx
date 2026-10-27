@@ -29,20 +29,17 @@ const portals = [
 
 export default function Home() {
   return (
-    <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-5 py-12">
-      <div className="glow-blob top-[-100px] left-[-80px] h-72 w-72 bg-primary/25" />
-      <div className="glow-blob top-40 right-[-100px] h-64 w-64 bg-accent/20" />
-
+    <div className="relative flex flex-1 flex-col items-center justify-center px-5 py-12">
       <div className="absolute top-5 right-5 z-10">
         <ThemeToggle />
       </div>
 
-      <div className="relative flex w-full max-w-sm flex-col gap-10">
+      <div className="flex w-full max-w-sm flex-col gap-10">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/25 to-accent/10 shadow-[0_18px_40px_-18px] shadow-primary/40">
-            <Leaf className="h-8 w-8 text-primary" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15">
+            <Leaf className="h-7 w-7 text-primary" />
           </div>
-          <h1 className="font-display text-3xl font-bold tracking-tight">
+          <h1 className="font-display text-2xl font-bold tracking-tight">
             OrganicPulse Districts
           </h1>
           <p className="text-sm leading-relaxed text-muted-foreground">
@@ -54,7 +51,7 @@ export default function Home() {
         <div className="flex flex-col gap-3">
           {portals.map(({ role, title, description, icon: Icon, accent }) => (
             <Link key={role} href={`/signup?role=${role}`}>
-              <Card className="flex flex-row items-center gap-4 p-4 transition-all hover:border-accent/50 hover:shadow-[0_12px_30px_-16px] hover:shadow-accent/40">
+              <Card className="flex flex-row items-center gap-4 p-4 transition-colors hover:border-accent/50">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted">
                   <Icon className={`h-5 w-5 ${accent}`} />
                 </div>
