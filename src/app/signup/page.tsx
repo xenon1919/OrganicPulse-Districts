@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ThemeToggle } from "@/components/app/theme-toggle";
 import { signUp } from "@/lib/data/auth";
 import { getHubs } from "@/lib/data/household";
 import type { MockHub } from "@/lib/mock/store";
@@ -52,10 +53,13 @@ function SignupForm() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-5 py-12">
+    <div className="relative flex flex-1 flex-col items-center justify-center px-5 py-12">
+      <div className="absolute top-5 right-5 z-10">
+        <ThemeToggle />
+      </div>
       <Card className="flex w-full max-w-sm flex-col gap-6 p-6">
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-semibold">Create account</h1>
+          <h1 className="font-display text-xl font-bold">Create account</h1>
           <p className="text-sm text-muted-foreground">Pick a role to get started.</p>
         </div>
 

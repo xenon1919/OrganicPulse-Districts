@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Leaf, ScanLine, Sprout } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { ThemeToggle } from "@/components/app/theme-toggle";
 import { listDemoProfiles, logIn } from "@/lib/data/auth";
 import type { MockProfile } from "@/lib/mock/store";
 
@@ -24,10 +25,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-5 py-12">
+    <div className="relative flex flex-1 flex-col items-center justify-center px-5 py-12">
+      <div className="absolute top-5 right-5 z-10">
+        <ThemeToggle />
+      </div>
       <div className="flex w-full max-w-sm flex-col gap-6">
         <div className="flex flex-col gap-1 text-center">
-          <h1 className="text-xl font-semibold">Log in</h1>
+          <h1 className="font-display text-xl font-bold">Log in</h1>
           <p className="text-sm text-muted-foreground">Demo accounts seeded for this build.</p>
         </div>
 

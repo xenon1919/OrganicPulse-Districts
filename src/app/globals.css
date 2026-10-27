@@ -9,7 +9,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-display: var(--font-space-grotesk);
+  --font-heading: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -55,88 +56,89 @@
 }
 
 :root {
-  /* OrganicPulse Districts brand theme: dark charcoal base, sage green primary, electric cyan accent. */
-  --background: oklch(0.16 0.004 285);
-  --foreground: oklch(0.96 0.003 285);
-  --card: oklch(0.205 0.006 285);
-  --card-foreground: oklch(0.96 0.003 285);
-  --popover: oklch(0.205 0.006 285);
-  --popover-foreground: oklch(0.96 0.003 285);
-  --primary: oklch(0.72 0.085 152);
-  --primary-foreground: oklch(0.16 0.02 152);
-  --secondary: oklch(0.255 0.006 285);
-  --secondary-foreground: oklch(0.96 0.003 285);
-  --muted: oklch(0.23 0.006 285);
-  --muted-foreground: oklch(0.65 0.01 285);
-  --accent: oklch(0.789 0.154 211.53);
-  --accent-foreground: oklch(0.16 0.02 211);
-  --destructive: oklch(0.65 0.2 25);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.789 0.154 211.53);
-  --chart-1: oklch(0.72 0.085 152);
-  --chart-2: oklch(0.789 0.154 211.53);
-  --chart-3: oklch(0.55 0.06 152);
-  --chart-4: oklch(0.55 0.1 211);
-  --chart-5: oklch(0.5 0.01 285);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.19 0.005 285);
-  --sidebar-foreground: oklch(0.96 0.003 285);
-  --sidebar-primary: oklch(0.72 0.085 152);
-  --sidebar-primary-foreground: oklch(0.16 0.02 152);
-  --sidebar-accent: oklch(0.255 0.006 285);
-  --sidebar-accent-foreground: oklch(0.96 0.003 285);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.789 0.154 211.53);
+  /* OrganicPulse Districts brand theme — light: cream base, grass-green primary, coral accent. */
+  --background: #f7f9f2;
+  --foreground: #0f1510;
+  --card: #ffffff;
+  --card-foreground: #0f1510;
+  --popover: #ffffff;
+  --popover-foreground: #0f1510;
+  --primary: #4c8a14;
+  --primary-foreground: #ffffff;
+  --secondary: #edf1e4;
+  --secondary-foreground: #0f1510;
+  --muted: #eef0e7;
+  --muted-foreground: #5b6b52;
+  --accent: #d93a5c;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --border: #e3e7da;
+  --input: #e3e7da;
+  --ring: #4c8a14;
+  --chart-1: #4c8a14;
+  --chart-2: #d93a5c;
+  --chart-3: #85ad55;
+  --chart-4: #e38095;
+  --chart-5: #5b6b52;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f1510;
+  --sidebar-primary: #4c8a14;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #edf1e4;
+  --sidebar-accent-foreground: #0f1510;
+  --sidebar-border: #e3e7da;
+  --sidebar-ring: #4c8a14;
 
   /* Category tags: A = Calcium (eggshells), B = Nitrogen (tea/coffee), C = Carbon (cardboard). */
-  --category-a: oklch(0.88 0.03 95);
-  --category-a-foreground: oklch(0.22 0.02 95);
-  --category-b: oklch(0.65 0.12 55);
-  --category-b-foreground: oklch(0.18 0.02 55);
-  --category-c: oklch(0.72 0.05 75);
-  --category-c-foreground: oklch(0.2 0.02 75);
+  --category-a: #f4efdd;
+  --category-a-foreground: #4a3f1d;
+  --category-b: #f0c494;
+  --category-b-foreground: #5b3410;
+  --category-c: #e4d3ae;
+  --category-c-foreground: #4a3b1e;
 }
 
 .dark {
-  --background: oklch(0.16 0.004 285);
-  --foreground: oklch(0.96 0.003 285);
-  --card: oklch(0.205 0.006 285);
-  --card-foreground: oklch(0.96 0.003 285);
-  --popover: oklch(0.205 0.006 285);
-  --popover-foreground: oklch(0.96 0.003 285);
-  --primary: oklch(0.72 0.085 152);
-  --primary-foreground: oklch(0.16 0.02 152);
-  --secondary: oklch(0.255 0.006 285);
-  --secondary-foreground: oklch(0.96 0.003 285);
-  --muted: oklch(0.23 0.006 285);
-  --muted-foreground: oklch(0.65 0.01 285);
-  --accent: oklch(0.789 0.154 211.53);
-  --accent-foreground: oklch(0.16 0.02 211);
-  --destructive: oklch(0.65 0.2 25);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.789 0.154 211.53);
-  --chart-1: oklch(0.72 0.085 152);
-  --chart-2: oklch(0.789 0.154 211.53);
-  --chart-3: oklch(0.55 0.06 152);
-  --chart-4: oklch(0.55 0.1 211);
-  --chart-5: oklch(0.5 0.01 285);
-  --sidebar: oklch(0.19 0.005 285);
-  --sidebar-foreground: oklch(0.96 0.003 285);
-  --sidebar-primary: oklch(0.72 0.085 152);
-  --sidebar-primary-foreground: oklch(0.16 0.02 152);
-  --sidebar-accent: oklch(0.255 0.006 285);
-  --sidebar-accent-foreground: oklch(0.96 0.003 285);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.789 0.154 211.53);
+  /* OrganicPulse Districts brand theme — dark: near-black base, lime primary, coral accent. */
+  --background: #0a0b0d;
+  --foreground: #f7fff0;
+  --card: #15171a;
+  --card-foreground: #f7fff0;
+  --popover: #15171a;
+  --popover-foreground: #f7fff0;
+  --primary: #b6ff3c;
+  --primary-foreground: #0a0b0d;
+  --secondary: #1d2017;
+  --secondary-foreground: #f7fff0;
+  --muted: #17191c;
+  --muted-foreground: #9bae95;
+  --accent: #ff5a7a;
+  --accent-foreground: #0a0b0d;
+  --destructive: #ff4d4d;
+  --border: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 14%);
+  --ring: #b6ff3c;
+  --chart-1: #b6ff3c;
+  --chart-2: #ff5a7a;
+  --chart-3: #7fbf3c;
+  --chart-4: #bf5a6e;
+  --chart-5: #9bae95;
+  --sidebar: #0f1114;
+  --sidebar-foreground: #f7fff0;
+  --sidebar-primary: #b6ff3c;
+  --sidebar-primary-foreground: #0a0b0d;
+  --sidebar-accent: #1d2017;
+  --sidebar-accent-foreground: #f7fff0;
+  --sidebar-border: rgb(255 255 255 / 10%);
+  --sidebar-ring: #b6ff3c;
 
-  --category-a: oklch(0.88 0.03 95);
-  --category-a-foreground: oklch(0.22 0.02 95);
-  --category-b: oklch(0.65 0.12 55);
-  --category-b-foreground: oklch(0.18 0.02 55);
-  --category-c: oklch(0.72 0.05 75);
-  --category-c-foreground: oklch(0.2 0.02 75);
+  --category-a: #f3ecd8;
+  --category-a-foreground: #241f12;
+  --category-b: #d97a3d;
+  --category-b-foreground: #241207;
+  --category-c: #c9a876;
+  --category-c-foreground: #2a2111;
 }
 
 @layer base {
@@ -152,4 +154,15 @@
   html {
     @apply font-sans;
   }
+}
+
+@utility glow-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(48px);
+  pointer-events: none;
+}
+
+@utility tabular-stat {
+  font-variant-numeric: tabular-nums;
 }

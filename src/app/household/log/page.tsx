@@ -65,7 +65,7 @@ export default function LogCollectionPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold">Log collection</h1>
+        <h1 className="font-display text-xl font-bold">Log collection</h1>
         <p className="text-sm text-muted-foreground">Tap each time you add to your caddy this week.</p>
       </div>
 
@@ -83,7 +83,7 @@ export default function LogCollectionPage() {
                   <span className="text-sm font-medium">{meta.label}</span>
                   <span className="text-xs text-muted-foreground">Tap to add</span>
                 </div>
-                <span className="text-lg font-semibold tabular-nums text-accent">
+                <span className="font-display tabular-stat text-lg font-bold text-accent">
                   {weights[category].toFixed(1)}kg
                 </span>
               </Card>

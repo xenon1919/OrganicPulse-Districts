@@ -31,7 +31,7 @@ export default function QrPassPage() {
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="flex flex-col items-center gap-1 text-center">
-        <h1 className="text-xl font-semibold">Your QR Pass</h1>
+        <h1 className="font-display text-xl font-bold">Your QR Pass</h1>
         <p className="text-sm text-muted-foreground">
           Show this to your collection partner on collection day.
         </p>

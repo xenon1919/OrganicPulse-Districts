@@ -95,7 +95,7 @@ export default function PartnerScanPage() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold">Scan &amp; log</h1>
+        <h1 className="font-display text-xl font-bold">Scan &amp; log</h1>
         <p className="text-sm text-muted-foreground">{profile.name}</p>
       </div>
 
@@ -169,7 +169,7 @@ export default function PartnerScanPage() {
             <span className="text-sm font-medium">Collection recorded</span>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-2xl font-semibold">+{stage.pointsAwarded} pts</span>
+            <span className="font-display tabular-stat text-2xl font-bold text-primary">+{stage.pointsAwarded} pts</span>
             <span className="text-xs text-muted-foreground">credited to the household</span>
           </div>
           <div
