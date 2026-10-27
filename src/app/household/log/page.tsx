@@ -5,6 +5,7 @@ import { Camera } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState } from "@/components/app/loading-state";
 import { CATEGORY_META } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
 import { getCaddyDeclaration, tapCategory, attachCaddyPhoto } from "@/lib/data/household";
@@ -38,17 +39,19 @@ export default function LogCollectionPage() {
     reader.onload = async () => {
       const updated = await attachCaddyPhoto(profile.id, reader.result as string);
       setDecl(updated);
-      toast.success("Photo attached - used to verify your drop-off on collection day.");
+      toast.success("Photo attached—used to verify your drop-off on collection day.");
     };
     reader.readAsDataURL(file);
   }
 
   if (loading || !profile || !decl) {
     return (
-      <div className="flex flex-col gap-4">
-        <Skeleton className="h-10 w-2/3" />
-        <Skeleton className="h-64 w-full rounded-2xl" />
-      </div>
+      <LoadingState>
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-10 w-2/3" />
+          <Skeleton className="h-64 w-full rounded-2xl" />
+        </div>
+      </LoadingState>
     );
   }
 
@@ -122,7 +125,7 @@ export default function LogCollectionPage() {
       </Card>
 
       <p className="text-center text-xs text-muted-foreground">
-        {total.toFixed(1)}kg logged so far - bring it to {`your hub's`} next collection day.
+        {total.toFixed(1)}kg logged so far—bring it to your hub&rsquo;s next collection day.
       </p>
     </div>
   );

@@ -5,9 +5,9 @@ export const CATEGORY_META: Record<
   Category,
   { label: string; short: string; icon: typeof Egg; bg: string; fg: string }
 > = {
-  A: { label: "Calcium - Eggshells", short: "Calcium", icon: Egg, bg: "bg-category-a", fg: "text-category-a-foreground" },
-  B: { label: "Nitrogen - Tea/Coffee", short: "Nitrogen", icon: Coffee, bg: "bg-category-b", fg: "text-category-b-foreground" },
-  C: { label: "Carbon - Cardboard", short: "Carbon", icon: Package, bg: "bg-category-c", fg: "text-category-c-foreground" },
+  A: { label: "Calcium—Eggshells", short: "Calcium", icon: Egg, bg: "bg-category-a", fg: "text-category-a-foreground" },
+  B: { label: "Nitrogen—Tea/Coffee", short: "Nitrogen", icon: Coffee, bg: "bg-category-b", fg: "text-category-b-foreground" },
+  C: { label: "Carbon—Cardboard", short: "Carbon", icon: Package, bg: "bg-category-c", fg: "text-category-c-foreground" },
 };
 
 export function CategoryBadge({ category, className = "" }: { category: Category; className?: string }) {

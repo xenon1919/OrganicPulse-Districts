@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState } from "@/components/app/loading-state";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
 
 export default function QrPassPage() {
@@ -20,7 +21,11 @@ export default function QrPassPage() {
   }, [profile]);
 
   if (loading || !profile) {
-    return <Skeleton className="h-96 w-full rounded-2xl" />;
+    return (
+      <LoadingState>
+        <Skeleton className="h-96 w-full rounded-2xl" />
+      </LoadingState>
+    );
   }
 
   return (

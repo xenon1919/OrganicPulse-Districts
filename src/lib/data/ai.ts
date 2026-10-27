@@ -41,7 +41,7 @@ export async function verifyCaddyPhoto(
     confidence: +(0.78 + Math.random() * 0.18).toFixed(2),
     mismatch,
     note: mismatch
-      ? "Photo composition estimate differs notably from the logged weights - flagged for a quick recheck."
+      ? "Photo composition estimate differs notably from the logged weights—flagged for a quick recheck."
       : "Photo composition estimate matches the logged weights within tolerance.",
   };
 }
@@ -66,7 +66,7 @@ export async function runMatchingAgent(input: {
   ];
 
   return {
-    rationale: `Matched ${input.availableKg}kg of ${categoryLabel} from ${input.hubName} to ${input.receiverName} - closest active demand for this category (wants ${input.desiredKg}kg), and the batch has been sitting the longest, so routing it now keeps hub turnover healthy.`,
+    rationale: `Matched ${input.availableKg}kg of ${categoryLabel} from ${input.hubName} to ${input.receiverName}—closest active demand for this category (wants ${input.desiredKg}kg), and the batch has been sitting the longest, so routing it now keeps hub turnover healthy.`,
     notificationCopy: `Resource match available: ${input.availableKg}kg of ${categoryLabel} ready at ${input.hubName}. Tap to claim.`,
   };
 }

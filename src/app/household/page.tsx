@@ -5,6 +5,7 @@ import { Leaf, Sparkles, TreeDeciduous } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState } from "@/components/app/loading-state";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
 import { getImpactStats, getHub } from "@/lib/data/household";
 
@@ -21,11 +22,13 @@ export default function HouseholdHomePage() {
 
   if (loading || !profile || !stats) {
     return (
-      <div className="flex flex-col gap-4">
-        <Skeleton className="h-28 w-full rounded-2xl" />
-        <Skeleton className="h-20 w-full rounded-2xl" />
-        <Skeleton className="h-20 w-full rounded-2xl" />
-      </div>
+      <LoadingState>
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-28 w-full rounded-2xl" />
+          <Skeleton className="h-20 w-full rounded-2xl" />
+          <Skeleton className="h-20 w-full rounded-2xl" />
+        </div>
+      </LoadingState>
     );
   }
 

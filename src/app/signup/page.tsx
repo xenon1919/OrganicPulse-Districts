@@ -78,7 +78,14 @@ function SignupForm() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Priya Rao" required />
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Priya Rao"
+              autoComplete="name"
+              required
+            />
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -91,7 +98,7 @@ function SignupForm() {
             >
               {hubs.map((h) => (
                 <option key={h.id} value={h.id} className="bg-card">
-                  {h.name} - {h.neighborhood}
+                  {h.name}
                 </option>
               ))}
             </select>

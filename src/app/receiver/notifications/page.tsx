@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { Bell, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState } from "@/components/app/loading-state";
+import { EmptyState } from "@/components/app/empty-state";
 import { CategoryBadge } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
 import { listMatchesForReceiver, claimMatch, type MatchNotification } from "@/lib/data/receiver";
@@ -36,11 +38,15 @@ export default function NotificationsPage() {
     await claimMatch(matchId);
     await refresh(profile.id);
     setClaimingId(null);
-    toast.success("Claimed - arrange pickup from the hub.");
+    toast.success("Claimed—arrange pickup from the hub.");
   }
 
   if (loading || !profile || !matches) {
-    return <Skeleton className="h-96 w-full rounded-2xl" />;
+    return (
+      <LoadingState>
+        <Skeleton className="h-96 w-full rounded-2xl" />
+      </LoadingState>
+    );
   }
 
   return (
@@ -51,9 +57,11 @@ export default function NotificationsPage() {
       </div>
 
       {matches.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          No matches yet - active demand requests get matched automatically as households drop off.
-        </p>
+        <EmptyState
+          icon={Bell}
+          title="No matches yet"
+          description="Active demand requests get matched automatically as households drop off nearby."
+        />
       )}
 
       <div className="flex flex-col gap-3">

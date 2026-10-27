@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState } from "@/components/app/loading-state";
 import { QrScanner } from "@/components/app/qr-scanner";
 import { CATEGORY_META } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
@@ -25,11 +26,9 @@ function ManualEntry({ onSubmit }: { onSubmit: (payload: string) => void }) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Household pass code"
-          className="h-8 text-xs"
+          className="text-xs"
         />
         <Button
-          size="sm"
-          className="h-8"
           onClick={() => {
             if (value.trim()) onSubmit(value.trim());
           }}
@@ -85,7 +84,13 @@ export default function PartnerScanPage() {
     setWeights({ A: "0", B: "0", C: "0" });
   }
 
-  if (loading || !profile) return <Skeleton className="h-96 w-full rounded-2xl" />;
+  if (loading || !profile) {
+    return (
+      <LoadingState>
+        <Skeleton className="h-96 w-full rounded-2xl" />
+      </LoadingState>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -98,7 +103,7 @@ export default function PartnerScanPage() {
         <Card className="flex flex-col gap-3 p-4">
           <QrScanner active onScan={handleScan} />
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
-            <ScanLine className="h-3.5 w-3.5" /> Point the camera at a household&apos;s QR pass.
+            <ScanLine className="h-3.5 w-3.5" /> Point the camera at a household&rsquo;s QR pass.
           </p>
           <ManualEntry onSubmit={handleScan} />
         </Card>
@@ -109,7 +114,7 @@ export default function PartnerScanPage() {
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium">{stage.household.name}</span>
             <span className="text-xs text-muted-foreground">
-              {stage.pending ? "Pre-filled from their caddy log" : "No pending log - enter weighed amounts"}
+              {stage.pending ? "Pre-filled from their caddy log" : "No pending log—enter weighed amounts"}
             </span>
           </div>
 
@@ -121,6 +126,7 @@ export default function PartnerScanPage() {
                 <Input
                   id={`weight-${cat}`}
                   type="number"
+                  inputMode="decimal"
                   min="0"
                   step="0.1"
                   value={weights[cat]}
@@ -130,14 +136,29 @@ export default function PartnerScanPage() {
             );
           })}
 
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex-1" onClick={resetToScan}>
-              Cancel
-            </Button>
-            <Button className="flex-1" onClick={handleConfirm} disabled={submitting}>
-              {submitting ? "Verifying..." : "Confirm weights"}
-            </Button>
-          </div>
+          {(() => {
+            const total = (Number(weights.A) || 0) + (Number(weights.B) || 0) + (Number(weights.C) || 0);
+            return (
+              <div className="flex flex-col gap-2">
+                {total <= 0 && (
+                  <p className="text-xs text-muted-foreground">Enter at least one category weight to continue.</p>
+                )}
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1" onClick={resetToScan}>
+                    Cancel
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={handleConfirm}
+                    disabled={submitting || total <= 0}
+                    aria-busy={submitting}
+                  >
+                    {submitting ? "Verifying..." : "Confirm weights"}
+                  </Button>
+                </div>
+              </div>
+            );
+          })()}
         </Card>
       )}
 
@@ -158,7 +179,7 @@ export default function PartnerScanPage() {
           >
             <span className="font-medium">
               SAM photo check: {Math.round(stage.sam.confidence * 100)}% confidence
-              {stage.sam.mismatch ? " - review recommended" : ""}
+              {stage.sam.mismatch ? "—review recommended" : ""}
             </span>
             <span className="text-muted-foreground">{stage.sam.note}</span>
           </div>

@@ -151,7 +151,7 @@ function seedDb(): MockDb {
     {
       id: "receiver-terrace-gardener",
       role: "receiver",
-      name: "Priya's Terrace Garden",
+      name: "Priya’s Terrace Garden",
       hub_id: "hub-malkajgiri",
       receiver_type: "gardener",
       green_points: 0,

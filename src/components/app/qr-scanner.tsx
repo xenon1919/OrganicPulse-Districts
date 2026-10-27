@@ -36,7 +36,7 @@ export function QrScanner({
           startedRef.current = true;
         })
         .catch((err) => {
-          if (!cancelled) setError(err?.message ?? "Could not access the camera - use the manual entry below.");
+          if (!cancelled) setError(err?.message ?? "Could not access the camera—use the manual entry below.");
         });
     });
 

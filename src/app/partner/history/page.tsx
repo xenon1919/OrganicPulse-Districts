@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { History } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingState } from "@/components/app/loading-state";
+import { EmptyState } from "@/components/app/empty-state";
 import { CategoryBadge } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
 import { listCollectionsAtHub } from "@/lib/data/partner";
@@ -18,7 +21,11 @@ export default function PartnerHistoryPage() {
   }, [profile]);
 
   if (loading || !profile || !collections) {
-    return <Skeleton className="h-96 w-full rounded-2xl" />;
+    return (
+      <LoadingState>
+        <Skeleton className="h-96 w-full rounded-2xl" />
+      </LoadingState>
+    );
   }
 
   return (
@@ -26,7 +33,11 @@ export default function PartnerHistoryPage() {
       <h1 className="text-xl font-semibold">Collection history</h1>
 
       {collections.length === 0 && (
-        <p className="text-sm text-muted-foreground">No collections logged at this hub yet.</p>
+        <EmptyState
+          icon={History}
+          title="No collections yet"
+          description="Logged drop-offs at your hub will show up here as they come in."
+        />
       )}
 
       <div className="flex flex-col gap-3">
@@ -45,7 +56,7 @@ export default function PartnerHistoryPage() {
             </div>
             <span className="text-xs text-muted-foreground">
               {(c.category_a_kg + c.category_b_kg + c.category_c_kg).toFixed(1)}kg total
-              {c.sam_verification?.mismatch ? " - flagged for recheck" : ""}
+              {c.sam_verification?.mismatch ? "—flagged for recheck" : ""}
             </span>
           </Card>
         ))}
