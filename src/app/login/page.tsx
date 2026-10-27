@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ThemeToggle } from "@/components/app/theme-toggle";
+import { OtpInput } from "@/components/app/otp-input";
 import { sendOtp, confirmOtp, getUserProfile, completeProfile } from "@/lib/data/auth";
 import { getHubs } from "@/lib/data/household";
 import type { Hub } from "@/types/database";
@@ -78,10 +79,14 @@ function LoginFlow() {
 
   async function handleConfirmOtp(e: React.FormEvent) {
     e.preventDefault();
-    if (!confirmation || otp.length !== 6) return;
+    await verifyCode(otp);
+  }
+
+  async function verifyCode(code: string) {
+    if (!confirmation || code.length !== 6 || submitting) return;
     setSubmitting(true);
     try {
-      const signedInUid = await confirmOtp(confirmation, otp);
+      const signedInUid = await confirmOtp(confirmation, code);
       const existing = await getUserProfile(signedInUid);
       if (existing) {
         router.push(ROLE_HOME[existing.role]);
@@ -91,6 +96,7 @@ function LoginFlow() {
       setStep("profile");
     } catch {
       toast.error("Incorrect code - try again.");
+      setOtp("");
     } finally {
       setSubmitting(false);
     }
@@ -164,17 +170,8 @@ function LoginFlow() {
           </div>
           <form onSubmit={handleConfirmOtp} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="otp">6-digit OTP</Label>
-              <Input
-                id="otp"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                placeholder="123456"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                required
-              />
+              <Label>6-digit OTP</Label>
+              <OtpInput value={otp} onChange={setOtp} onComplete={verifyCode} disabled={submitting} />
             </div>
             <Button type="submit" disabled={submitting || otp.length !== 6}>
               {submitting ? "Verifying…" : "Verify"}
