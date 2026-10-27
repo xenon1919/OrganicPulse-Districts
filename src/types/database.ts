@@ -128,6 +128,15 @@ export interface Database {
   };
 }
 
+export interface CaddyDeclaration {
+  household_id: string;
+  category_a_kg: number;
+  category_b_kg: number;
+  category_c_kg: number;
+  photo_url: string | null;
+  updated_at: string;
+}
+
 export const CATEGORY_LABEL: Record<Category, string> = {
   A: "Calcium (Eggshells)",
   B: "Nitrogen (Tea/Coffee)",

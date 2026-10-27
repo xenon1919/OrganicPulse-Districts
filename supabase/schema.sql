@@ -36,6 +36,18 @@ create table if not exists collections (
   verified_by uuid references profiles (id) on delete set null
 );
 
+-- One active "what's in my caddy right now" declaration per household, built
+-- up from the 3-button log screen between collection days. The partner scan
+-- consumes it (becomes a `collections` row) and it's cleared/reset.
+create table if not exists caddy_declarations (
+  household_id uuid primary key references profiles (id) on delete cascade,
+  category_a_kg numeric(6, 2) not null default 0,
+  category_b_kg numeric(6, 2) not null default 0,
+  category_c_kg numeric(6, 2) not null default 0,
+  photo_url text,
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists inventory_batches (
   id uuid primary key default gen_random_uuid(),
   hub_id uuid not null references hubs (id) on delete cascade,
@@ -76,6 +88,7 @@ create table if not exists green_points_ledger (
 
 alter table hubs enable row level security;
 alter table profiles enable row level security;
+alter table caddy_declarations enable row level security;
 alter table collections enable row level security;
 alter table inventory_batches enable row level security;
 alter table demand_requests enable row level security;
@@ -93,6 +106,18 @@ create policy "users can update their own profile" on profiles
 
 create policy "users can insert their own profile" on profiles
   for insert to authenticated with check (auth.uid() = id);
+
+create policy "households manage their own caddy declaration" on caddy_declarations
+  for all to authenticated using (auth.uid() = household_id) with check (auth.uid() = household_id);
+
+create policy "partners can read caddy declarations at their hub" on caddy_declarations
+  for select to authenticated using (
+    exists (
+      select 1 from profiles p
+      join profiles h on h.id = caddy_declarations.household_id
+      where p.id = auth.uid() and p.role = 'partner' and p.hub_id = h.hub_id
+    )
+  );
 
 create policy "households manage their own collections" on collections
   for all to authenticated using (auth.uid() = household_id) with check (auth.uid() = household_id);
