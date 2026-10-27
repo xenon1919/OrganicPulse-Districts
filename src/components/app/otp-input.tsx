@@ -67,7 +67,7 @@ export function OtpInput({
   }
 
   return (
-    <div className="flex justify-between gap-2">
+    <div className="flex justify-center gap-2">
       {Array.from({ length }).map((_, i) => {
         const filled = Boolean(value[i]);
         return (
@@ -87,7 +87,7 @@ export function OtpInput({
             onPaste={handlePaste}
             onFocus={(e) => e.target.select()}
             aria-label={`Digit ${i + 1} of ${length}`}
-            className={`h-12 w-full min-w-0 rounded-xl border text-center text-lg font-semibold tabular-nums outline-none transition-all duration-200 ease-out ${
+            className={`h-10 w-9 shrink-0 rounded-lg border text-center text-base font-semibold tabular-nums outline-none transition-all duration-200 ease-out ${
               filled
                 ? "scale-105 border-accent bg-accent/10 text-foreground"
                 : "scale-100 border-input bg-transparent text-foreground"
