@@ -1,0 +1,13 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Caddy photos: any signed-in user can view one (shown in the partner's
+    // scan review and the household's own log screen); only the household
+    // that owns the uid-scoped folder can upload to it.
+    match /caddy-photos/{uid}/{fileName} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}

@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     B: caddy?.categoryBKg ?? weights.B,
     C: caddy?.categoryCKg ?? weights.C,
   };
-  const samVerification = await verifyCaddyPhoto(declared);
+  const samVerification = await verifyCaddyPhoto(declared, caddy?.photoUrl ?? null);
 
   const totalKg = weights.A + weights.B + weights.C;
   const pointsAwarded = Math.round(totalKg * POINTS_PER_KG);
