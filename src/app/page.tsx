@@ -11,7 +11,7 @@ const materials = [
 export default function Home() {
   return (
     <div className="flex w-full flex-1 flex-col items-center bg-background px-5 pt-6 pb-8">
-      <div className="flex w-full max-w-sm flex-1 flex-col">
+      <div className="flex w-full max-w-sm flex-col">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -22,14 +22,7 @@ export default function Home() {
           <ThemeToggle />
         </div>
 
-        <div className="mt-8 flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5">
-          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-          <span className="font-mono text-[11px] tracking-wide text-muted-foreground">
-            MALKAJGIRI · PILOT DISTRICT
-          </span>
-        </div>
-
-        <div className="mt-5 flex flex-col gap-3">
+        <div className="mt-8 flex flex-col gap-3">
           <h1 className="font-display text-[2.3rem] leading-[1.08] font-black tracking-tight text-balance">
             Your waste.
             <br />
@@ -37,8 +30,8 @@ export default function Home() {
           </h1>
           <p className="text-[15px] leading-relaxed text-muted-foreground">
             Sort eggshells, coffee grounds, and cardboard at home. We match it
-            with a neighbour who turns it into manure — verified at every
-            step by Meta&apos;s SAM 3.1.
+            with a neighbour who turns it into manure, with every drop photo
+            checked before it counts.
           </p>
         </div>
 
@@ -75,17 +68,12 @@ export default function Home() {
           </Link>
         </p>
 
-        <div className="mt-auto flex flex-col gap-3 pt-10">
-          <p className="text-sm text-muted-foreground">
-            Already sorting with us?{" "}
-            <Link href="/login" className="font-bold text-primary">
-              Log in
-            </Link>
-          </p>
-          <p className="font-mono text-[11px] text-muted-foreground/70">
-            verify: sam-3.1 · match: muse-spark-1.3
-          </p>
-        </div>
+        <p className="mt-10 text-center text-sm text-muted-foreground">
+          Already sorting with us?{" "}
+          <Link href="/login" className="font-bold text-primary">
+            Log in
+          </Link>
+        </p>
       </div>
     </div>
   );
