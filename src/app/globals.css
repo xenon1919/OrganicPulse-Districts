@@ -56,48 +56,48 @@
 }
 
 :root {
-  /* OrganicPulse Districts brand theme — light (secondary mode): clean
-     neutral paper, signature lime-green primary, amber-gold accent. The
-     lime is the one bright color in the system (CRED's brand move) -
-     everything else stays quiet so it reads as premium, not candy. */
-  --background: oklch(0.97 0.003 95);
-  --foreground: oklch(0.14 0.004 95);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.14 0.004 95);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.14 0.004 95);
+  /* OrganicPulse Districts brand theme — light (secondary mode): every
+     neutral surface is lemon-tinted (hue 126, the same hue as primary)
+     instead of true neutral white/grey, so the lemon theme runs through
+     the whole app, not just one accent dot. */
+  --background: oklch(0.97 0.018 126);
+  --foreground: oklch(0.16 0.02 126);
+  --card: oklch(0.995 0.014 126);
+  --card-foreground: oklch(0.16 0.02 126);
+  --popover: oklch(0.995 0.014 126);
+  --popover-foreground: oklch(0.16 0.02 126);
   --primary: oklch(0.56 0.17 128);
   --primary-foreground: oklch(0.12 0.01 128);
-  --secondary: oklch(0.93 0.004 95);
-  --secondary-foreground: oklch(0.14 0.004 95);
-  --muted: oklch(0.935 0.004 95);
-  --muted-foreground: oklch(0.47 0.006 95);
+  --secondary: oklch(0.93 0.022 126);
+  --secondary-foreground: oklch(0.16 0.02 126);
+  --muted: oklch(0.925 0.022 126);
+  --muted-foreground: oklch(0.47 0.025 126);
   --accent: oklch(0.63 0.13 65);
   --accent-foreground: oklch(0.12 0.01 65);
   --destructive: oklch(0.56 0.2 28);
-  --border: oklch(0.88 0.005 95);
-  --input: oklch(0.88 0.005 95);
+  --border: oklch(0.87 0.025 126);
+  --input: oklch(0.87 0.025 126);
   --ring: oklch(0.56 0.17 128);
   --chart-1: oklch(0.56 0.17 128);
   --chart-2: oklch(0.63 0.13 65);
   --chart-3: oklch(0.65 0.1 128);
   --chart-4: oklch(0.68 0.11 65);
-  --chart-5: oklch(0.47 0.006 95);
+  --chart-5: oklch(0.47 0.025 126);
   --radius: 0.875rem;
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.14 0.004 95);
+  --sidebar: oklch(0.995 0.014 126);
+  --sidebar-foreground: oklch(0.16 0.02 126);
   --sidebar-primary: oklch(0.56 0.17 128);
   --sidebar-primary-foreground: oklch(0.12 0.01 128);
-  --sidebar-accent: oklch(0.93 0.004 95);
-  --sidebar-accent-foreground: oklch(0.14 0.004 95);
-  --sidebar-border: oklch(0.88 0.005 95);
+  --sidebar-accent: oklch(0.93 0.022 126);
+  --sidebar-accent-foreground: oklch(0.16 0.02 126);
+  --sidebar-border: oklch(0.87 0.025 126);
   --sidebar-ring: oklch(0.56 0.17 128);
 
   /* Category tags, named for the real material: A = eggshell (Calcium),
      B = coffee grounds (Nitrogen), C = kraft cardboard (Carbon) - rendered
      as rich, saturated jewel tones rather than soft pastels. */
-  --category-a: oklch(0.93 0.008 90);
-  --category-a-foreground: oklch(0.2 0.01 90);
+  --category-a: oklch(0.92 0.05 108);
+  --category-a-foreground: oklch(0.22 0.03 108);
   --category-b: oklch(0.52 0.12 45);
   --category-b-foreground: oklch(0.97 0.01 45);
   --category-c: oklch(0.72 0.1 70);
@@ -105,43 +105,44 @@
 }
 
 .dark {
-  /* OrganicPulse Districts brand theme — dark (primary mode): true
-     near-black, not a warm or blue-grey tint, so the single lime-green
-     accent is the only color doing any work on the page. */
-  --background: oklch(0.1 0.003 95);
-  --foreground: oklch(0.96 0.003 95);
-  --card: oklch(0.16 0.005 95);
-  --card-foreground: oklch(0.96 0.003 95);
-  --popover: oklch(0.16 0.005 95);
-  --popover-foreground: oklch(0.96 0.003 95);
+  /* OrganicPulse Districts brand theme — dark (primary mode): every
+     neutral surface carries the same lemon hue (126) as primary, at low
+     chroma, so the whole theme reads as lemon-washed near-black rather
+     than true neutral black with a single accent dot. */
+  --background: oklch(0.1 0.016 126);
+  --foreground: oklch(0.96 0.015 126);
+  --card: oklch(0.17 0.022 126);
+  --card-foreground: oklch(0.96 0.015 126);
+  --popover: oklch(0.17 0.022 126);
+  --popover-foreground: oklch(0.96 0.015 126);
   --primary: oklch(0.87 0.21 126);
   --primary-foreground: oklch(0.14 0.02 126);
-  --secondary: oklch(0.2 0.005 95);
-  --secondary-foreground: oklch(0.96 0.003 95);
-  --muted: oklch(0.19 0.005 95);
-  --muted-foreground: oklch(0.63 0.006 95);
+  --secondary: oklch(0.21 0.022 126);
+  --secondary-foreground: oklch(0.96 0.015 126);
+  --muted: oklch(0.2 0.022 126);
+  --muted-foreground: oklch(0.65 0.03 126);
   --accent: oklch(0.78 0.14 68);
   --accent-foreground: oklch(0.16 0.02 68);
   --destructive: oklch(0.65 0.19 28);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 14%);
+  --border: oklch(0.87 0.21 126 / 16%);
+  --input: oklch(0.87 0.21 126 / 20%);
   --ring: oklch(0.87 0.21 126);
   --chart-1: oklch(0.87 0.21 126);
   --chart-2: oklch(0.78 0.14 68);
   --chart-3: oklch(0.6 0.13 126);
   --chart-4: oklch(0.62 0.11 68);
-  --chart-5: oklch(0.63 0.006 95);
-  --sidebar: oklch(0.13 0.004 95);
-  --sidebar-foreground: oklch(0.96 0.003 95);
+  --chart-5: oklch(0.65 0.03 126);
+  --sidebar: oklch(0.14 0.02 126);
+  --sidebar-foreground: oklch(0.96 0.015 126);
   --sidebar-primary: oklch(0.87 0.21 126);
   --sidebar-primary-foreground: oklch(0.14 0.02 126);
-  --sidebar-accent: oklch(0.2 0.005 95);
-  --sidebar-accent-foreground: oklch(0.96 0.003 95);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-accent: oklch(0.21 0.022 126);
+  --sidebar-accent-foreground: oklch(0.96 0.015 126);
+  --sidebar-border: oklch(0.87 0.21 126 / 16%);
   --sidebar-ring: oklch(0.87 0.21 126);
 
-  --category-a: oklch(0.88 0.01 90);
-  --category-a-foreground: oklch(0.18 0.015 90);
+  --category-a: oklch(0.86 0.07 108);
+  --category-a-foreground: oklch(0.2 0.03 108);
   --category-b: oklch(0.56 0.13 48);
   --category-b-foreground: oklch(0.96 0.01 48);
   --category-c: oklch(0.68 0.11 70);
