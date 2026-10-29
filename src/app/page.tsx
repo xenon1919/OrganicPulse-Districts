@@ -11,18 +11,18 @@ const materials = [
 export default function Home() {
   return (
     <div className="flex w-full flex-1 flex-col items-center bg-background px-5 pt-6 pb-8">
-      <div className="flex w-full max-w-sm flex-col">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Leaf className="h-4 w-4" />
-            </div>
-            <span className="font-display text-[15px] font-bold tracking-tight">OrganicPulse</span>
+      <div className="flex w-full max-w-sm items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Leaf className="h-4 w-4" />
           </div>
-          <ThemeToggle />
+          <span className="font-display text-[15px] font-bold tracking-tight">OrganicPulse</span>
         </div>
+        <ThemeToggle />
+      </div>
 
-        <div className="mt-8 flex flex-col gap-3">
+      <div className="flex w-full max-w-sm flex-1 flex-col justify-center">
+        <div className="flex flex-col gap-3">
           <h1 className="font-display text-[2.3rem] leading-[1.08] font-black tracking-tight text-balance">
             Your waste.
             <br />

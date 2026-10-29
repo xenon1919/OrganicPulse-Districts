@@ -1,17 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Inter, IBM_Plex_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { RegisterSW } from "@/components/register-sw";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
-// Archivo for display - a confident, blocky grotesk with a true black
-// weight and a condensed width axis, for the premium-dark/bold-accent
-// fintech look (CRED) this product is now modeled on.
-const archivo = Archivo({
-  variable: "--font-archivo",
+// Bricolage Grotesque for display - a distinctive variable grotesk with
+// its own optical-size personality (not another neutral geometric sans),
+// used for headlines and big stat numbers.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: ["600", "700", "900"],
+  weight: "variable",
+  axes: ["opsz"],
 });
 
 // Inter for body copy - clean and neutral, lets the display weight and the
@@ -57,7 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${archivo.variable} ${inter.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${bricolage.variable} ${inter.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
