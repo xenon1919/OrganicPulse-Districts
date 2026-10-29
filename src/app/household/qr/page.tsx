@@ -17,7 +17,11 @@ export default function QrPassPage() {
       width: 280,
       margin: 2,
       color: { dark: "#16181a", light: "#eef3ee" },
-    }).then(setQrDataUrl);
+    })
+      .then(setQrDataUrl)
+      .catch(() => {
+        // The raw pass code below the QR image still works as a fallback.
+      });
   }, [profile]);
 
   if (loading || !profile) {

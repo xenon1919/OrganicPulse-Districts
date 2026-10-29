@@ -1,7 +1,10 @@
 export type ProfileRole = "household" | "receiver" | "partner";
 export type ReceiverType = "manufacturer" | "gardener" | "both";
 export type Category = "A" | "B" | "C"; // A = Calcium (eggshells), B = Nitrogen (tea/coffee), C = Carbon (cardboard)
-export type BatchStatus = "open" | "claimed" | "fulfilled";
+// "proposed" = the matching agent has earmarked this batch for a specific
+// receiver's proposed match - no longer generally claimable until they
+// accept or it's otherwise released.
+export type BatchStatus = "open" | "proposed" | "claimed" | "fulfilled";
 export type DemandStatus = "active" | "paused";
 export type MatchStatus = "proposed" | "claimed" | "fulfilled";
 

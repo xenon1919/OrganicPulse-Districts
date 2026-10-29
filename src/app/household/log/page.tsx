@@ -21,14 +21,20 @@ export default function LogCollectionPage() {
 
   useEffect(() => {
     if (!profile) return;
-    getCaddyDeclaration(profile.id).then(setDecl);
+    getCaddyDeclaration(profile.id)
+      .then(setDecl)
+      .catch(() => toast.error("Couldn't load your caddy log—check your connection and reload."));
   }, [profile]);
 
   async function handleTap(category: Category) {
     if (!profile) return;
-    const updated = await tapCategory(profile.id, category);
-    setDecl(updated);
-    toast.success(`Logged +0.1kg ${CATEGORY_META[category].short}`);
+    try {
+      const updated = await tapCategory(profile.id, category);
+      setDecl(updated);
+      toast.success(`Logged +0.1kg ${CATEGORY_META[category].short}`);
+    } catch {
+      toast.error("Couldn't save that—check your connection and try again.");
+    }
   }
 
   async function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -40,8 +46,13 @@ export default function LogCollectionPage() {
       const updated = await attachCaddyPhoto(profile.id, file);
       setDecl(updated);
       toast.success("Photo attached—used to verify your drop-off on collection day.");
+    } catch {
+      toast.error("Photo upload failed—check your connection and try again.");
     } finally {
       setUploading(false);
+      // Without this, re-selecting the same file after a failed upload
+      // wouldn't fire onChange again (the input's value hasn't "changed").
+      e.target.value = "";
     }
   }
 

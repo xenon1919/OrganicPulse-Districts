@@ -25,9 +25,18 @@ export default function NotificationsPage() {
   async function handleClaim(matchId: string) {
     if (!profile) return;
     setClaimingId(matchId);
-    await claimMatch(matchId);
-    setClaimingId(null);
-    toast.success("Claimed—arrange pickup from the hub.");
+    try {
+      const claimed = await claimMatch(matchId);
+      if (claimed) {
+        toast.success("Claimed—arrange pickup from the hub.");
+      } else {
+        toast.error("This match is no longer available.");
+      }
+    } catch {
+      toast.error("Couldn't claim this—check your connection and try again.");
+    } finally {
+      setClaimingId(null);
+    }
   }
 
   if (loading || !profile || !matches) {

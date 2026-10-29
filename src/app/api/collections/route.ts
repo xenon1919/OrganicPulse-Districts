@@ -162,7 +162,15 @@ async function runMatchingPass(hubId: string) {
       hubName: batch.hubName ?? "the hub",
     });
 
-    await adminDb.collection("matches").add({
+    // Mark the batch as spoken-for in the same write pass that creates the
+    // match, so a later collection event's matching pass (or a receiver
+    // browsing the marketplace) can't also match/claim the same kg to
+    // someone else. Without this, the batch stayed "open" after a proposed
+    // match, so a second active demand in the same category could get
+    // matched against the exact same still-"open" batch - promising the
+    // same physical inventory to two receivers at once.
+    const matchBatch = adminDb.batch();
+    matchBatch.set(adminDb.collection("matches").doc(), {
       inventoryBatchId: batchDoc.id,
       demandRequestId: chosenDemand.id,
       category: batch.category,
@@ -173,5 +181,7 @@ async function runMatchingPass(hubId: string) {
       status: "proposed",
       matchedAt: new Date().toISOString(),
     });
+    matchBatch.update(batchDoc.ref, { status: "proposed" });
+    await matchBatch.commit();
   }
 }

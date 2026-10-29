@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { History } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingState } from "@/components/app/loading-state";
@@ -17,7 +18,9 @@ export default function PartnerHistoryPage() {
 
   useEffect(() => {
     if (!profile?.hubId) return;
-    listCollectionsAtHub(profile.hubId).then(setCollections);
+    listCollectionsAtHub(profile.hubId)
+      .then(setCollections)
+      .catch(() => toast.error("Couldn't load collection history—check your connection and reload."));
   }, [profile]);
 
   if (loading || !profile || !collections) {

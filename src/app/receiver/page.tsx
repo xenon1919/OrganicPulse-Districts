@@ -25,9 +25,18 @@ export default function MarketplacePage() {
   async function handleClaim(batchId: string) {
     if (!profile) return;
     setClaimingId(batchId);
-    await claimBatchDirectly(batchId, profile.id, profile.name);
-    setClaimingId(null);
-    toast.success("Claimed—arrange pickup from the hub.");
+    try {
+      const claimed = await claimBatchDirectly(batchId, profile.id, profile.name);
+      if (claimed) {
+        toast.success("Claimed—arrange pickup from the hub.");
+      } else {
+        toast.error("Someone else just claimed this—check the marketplace for other batches.");
+      }
+    } catch {
+      toast.error("Couldn't claim this—check your connection and try again.");
+    } finally {
+      setClaimingId(null);
+    }
   }
 
   if (loading || !profile || !listings) {

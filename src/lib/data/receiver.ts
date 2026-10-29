@@ -1,15 +1,13 @@
 "use client";
 
 import {
-  addDoc,
   collection,
   doc,
   getDoc,
-  getDocs,
   onSnapshot,
   query,
-  updateDoc,
   where,
+  writeBatch,
   type QueryDocumentSnapshot,
   type Unsubscribe,
 } from "firebase/firestore";
@@ -86,55 +84,67 @@ export function subscribeToMatchesForReceiver(
   });
 }
 
-export async function claimMatch(matchId: string): Promise<void> {
+/**
+ * Returns true if the claim actually happened. Can legitimately no-op (e.g.
+ * someone else claimed the same match/batch a moment earlier) - callers
+ * should only show a success toast when this returns true.
+ *
+ * The match and its inventory batch are updated in one atomic batched write
+ * - two separate updateDoc() calls previously meant the match could flip to
+ * "claimed" while the batch update silently failed (a security-rule
+ * mismatch reproduced exactly this during testing), leaving the two
+ * documents permanently out of sync with no error surfaced anywhere.
+ */
+export async function claimMatch(matchId: string): Promise<boolean> {
   const db = getDb();
   const matchSnap = await getDoc(doc(db, "matches", matchId));
-  if (!matchSnap.exists()) return;
+  if (!matchSnap.exists()) return false;
   const match = matchSnap.data() as Match;
+  if (match.status !== "proposed") return false;
 
-  await updateDoc(doc(db, "matches", matchId), { status: "claimed" });
-  await updateDoc(doc(db, "inventoryBatches", match.inventoryBatchId), { status: "claimed" });
+  const batch = writeBatch(db);
+  batch.update(doc(db, "matches", matchId), { status: "claimed" });
+  batch.update(doc(db, "inventoryBatches", match.inventoryBatchId), { status: "claimed" });
+  await batch.commit();
+  return true;
 }
 
-export async function claimBatchDirectly(batchId: string, receiverId: string, receiverName: string): Promise<void> {
+/** Same success-signaling contract and atomicity rationale as claimMatch(). */
+export async function claimBatchDirectly(batchId: string, receiverId: string, receiverName: string): Promise<boolean> {
   const db = getDb();
   const batchSnap = await getDoc(doc(db, "inventoryBatches", batchId));
-  if (!batchSnap.exists()) return;
-  const batch = batchSnap.data() as InventoryBatch;
-  if (batch.status !== "open") return;
+  if (!batchSnap.exists()) return false;
+  const inventoryBatch = batchSnap.data() as InventoryBatch;
+  if (inventoryBatch.status !== "open") return false;
 
-  const existingDemand = await getDocs(
-    query(
-      collection(db, "demandRequests"),
-      where("receiverId", "==", receiverId),
-      where("category", "==", batch.category)
-    )
-  );
+  // Always create a fresh demand request for this claim rather than reusing
+  // an existing one for the same receiver+category - an old demand doc may
+  // already be tied to a previous (possibly still "claimed") match, and
+  // reusing its id would attach a second match to it and permanently hide
+  // it from the agent's future matching passes.
+  const demandRef = doc(collection(db, "demandRequests"));
+  const matchRef = doc(collection(db, "matches"));
 
-  let demandId: string;
-  if (!existingDemand.empty) {
-    demandId = existingDemand.docs[0].id;
-  } else {
-    const demandRef = await addDoc(collection(db, "demandRequests"), {
-      receiverId,
-      receiverName,
-      category: batch.category,
-      desiredKg: batch.availableKg,
-      status: "active",
-    });
-    demandId = demandRef.id;
-  }
-
-  await updateDoc(doc(db, "inventoryBatches", batchId), { status: "claimed" });
-  await addDoc(collection(db, "matches"), {
+  const writeBatchOp = writeBatch(db);
+  writeBatchOp.set(demandRef, {
+    receiverId,
+    receiverName,
+    category: inventoryBatch.category,
+    desiredKg: inventoryBatch.availableKg,
+    status: "active",
+  });
+  writeBatchOp.update(doc(db, "inventoryBatches", batchId), { status: "claimed" });
+  writeBatchOp.set(matchRef, {
     inventoryBatchId: batchId,
-    demandRequestId: demandId,
-    category: batch.category,
-    availableKg: batch.availableKg,
-    hubName: batch.hubName,
+    demandRequestId: demandRef.id,
+    category: inventoryBatch.category,
+    availableKg: inventoryBatch.availableKg,
+    hubName: inventoryBatch.hubName,
     receiverId,
     agentRationale: "Claimed directly from the marketplace feed.",
     status: "claimed",
     matchedAt: new Date().toISOString(),
   });
+  await writeBatchOp.commit();
+  return true;
 }

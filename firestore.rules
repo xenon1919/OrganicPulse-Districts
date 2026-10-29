@@ -17,9 +17,10 @@ service cloud.firestore {
     match /inventoryBatches/{batchId} {
       allow read: if signedIn();
       allow create: if false;
-      // Claiming: a receiver may only flip an open batch to claimed.
+      // Claiming: a receiver may flip an open OR agent-proposed batch to
+      // claimed (proposed = already earmarked for them via a match).
       allow update: if signedIn()
-        && resource.data.status == 'open'
+        && resource.data.status in ['open', 'proposed']
         && request.resource.data.status == 'claimed'
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
       allow delete: if false;

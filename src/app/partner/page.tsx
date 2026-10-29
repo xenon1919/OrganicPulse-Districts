@@ -51,31 +51,40 @@ export default function PartnerScanPage() {
   const [submitting, setSubmitting] = useState(false);
 
   async function handleScan(payload: string) {
-    const household = await findHouseholdByQr(payload);
-    if (!household) {
-      toast.error("No household found for that QR code.");
-      return;
+    try {
+      const household = await findHouseholdByQr(payload);
+      if (!household) {
+        toast.error("No household found for that QR code.");
+        return;
+      }
+      const pending = await getPendingCaddyFor(household.id);
+      setWeights({
+        A: (pending?.categoryAKg ?? 0).toFixed(1),
+        B: (pending?.categoryBKg ?? 0).toFixed(1),
+        C: (pending?.categoryCKg ?? 0).toFixed(1),
+      });
+      setStage({ step: "review", household, pending: pending ?? null });
+    } catch {
+      toast.error("Couldn't look up that household—check your connection and try again.");
     }
-    const pending = await getPendingCaddyFor(household.id);
-    setWeights({
-      A: (pending?.categoryAKg ?? 0).toFixed(1),
-      B: (pending?.categoryBKg ?? 0).toFixed(1),
-      C: (pending?.categoryCKg ?? 0).toFixed(1),
-    });
-    setStage({ step: "review", household, pending: pending ?? null });
   }
 
   async function handleConfirm() {
     if (stage.step !== "review" || !profile) return;
     setSubmitting(true);
-    const { pointsAwarded, collection } = await recordCollection({
-      partnerId: profile.id,
-      householdId: stage.household.id,
-      hubId: profile.hubId ?? stage.household.hubId ?? "",
-      weights: { A: Number(weights.A) || 0, B: Number(weights.B) || 0, C: Number(weights.C) || 0 },
-    });
-    setSubmitting(false);
-    setStage({ step: "done", pointsAwarded, sam: collection.samVerification! });
+    try {
+      const { pointsAwarded, collection } = await recordCollection({
+        partnerId: profile.id,
+        householdId: stage.household.id,
+        hubId: profile.hubId ?? stage.household.hubId ?? "",
+        weights: { A: Number(weights.A) || 0, B: Number(weights.B) || 0, C: Number(weights.C) || 0 },
+      });
+      setStage({ step: "done", pointsAwarded, sam: collection.samVerification! });
+    } catch {
+      toast.error("Couldn't record the collection—check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function resetToScan() {
@@ -129,7 +138,14 @@ export default function PartnerScanPage() {
                   min="0"
                   step="0.1"
                   value={weights[cat]}
-                  onChange={(e) => setWeights((w) => ({ ...w, [cat]: e.target.value }))}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    // Block negative values here - the HTML min="0" attribute
+                    // doesn't stop someone from typing "-5", and a negative
+                    // category weight would corrupt the collection record.
+                    if (raw !== "" && Number(raw) < 0) return;
+                    setWeights((w) => ({ ...w, [cat]: raw }));
+                  }}
                 />
               </div>
             );

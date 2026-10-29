@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Leaf, Sparkles, TreeDeciduous } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,7 +16,9 @@ export default function HouseholdHomePage() {
 
   useEffect(() => {
     if (!profile) return;
-    getImpactStats(profile.id).then(setStats);
+    getImpactStats(profile.id)
+      .then(setStats)
+      .catch(() => toast.error("Couldn't load your stats—check your connection and reload."));
   }, [profile]);
 
   if (loading || !profile || !stats) {
