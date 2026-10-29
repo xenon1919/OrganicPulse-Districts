@@ -4,13 +4,15 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Leaf, ScanLine, Sprout } from "lucide-react";
 import { toast } from "sonner";
-import type { ConfirmationResult } from "firebase/auth";
+import { onAuthStateChanged, type ConfirmationResult } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/app/theme-toggle";
 import { OtpInput } from "@/components/app/otp-input";
+import { getAuthClient } from "@/lib/firebase/client";
 import { sendOtp, confirmOtp, getUserProfile, completeProfile } from "@/lib/data/auth";
 import { getHubs } from "@/lib/data/household";
 import type { Hub } from "@/types/database";
@@ -30,7 +32,7 @@ function LoginFlow() {
   const searchParams = useSearchParams();
   const initialRole = (searchParams.get("role") as ProfileRole) ?? "household";
 
-  const [step, setStep] = useState<"phone" | "otp" | "profile">("phone");
+  const [step, setStep] = useState<"checking" | "phone" | "otp" | "profile">("checking");
   const [phoneDigits, setPhoneDigits] = useState("");
   const [otp, setOtp] = useState("");
   const [confirmation, setConfirmation] = useState<ConfirmationResult | null>(null);
@@ -55,6 +57,28 @@ function LoginFlow() {
       setHubId((current) => current || list[0]?.id || "");
     });
   }, [step]);
+
+  useEffect(() => {
+    // Already signed in (e.g. Firebase session persisted, or the back
+    // button/a bookmark brought us here) - skip straight to their home
+    // instead of showing the phone form again.
+    const unsubscribe = onAuthStateChanged(getAuthClient(), async (user) => {
+      if (!user) {
+        setStep((current) => (current === "checking" ? "phone" : current));
+        return;
+      }
+      const existing = await getUserProfile(user.uid);
+      if (existing) {
+        router.replace(ROLE_HOME[existing.role]);
+        return;
+      }
+      // Signed in but never finished the profile step - let them continue it.
+      setUid(user.uid);
+      setStep("profile");
+    });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const phoneE164 = `+91${phoneDigits}`;
 
@@ -89,7 +113,7 @@ function LoginFlow() {
       const signedInUid = await confirmOtp(confirmation, code);
       const existing = await getUserProfile(signedInUid);
       if (existing) {
-        router.push(ROLE_HOME[existing.role]);
+        router.replace(ROLE_HOME[existing.role]);
         return;
       }
       setUid(signedInUid);
@@ -117,7 +141,7 @@ function LoginFlow() {
         hubId,
         receiverType: role === "receiver" ? receiverType : undefined,
       });
-      router.push(ROLE_HOME[profile.role]);
+      router.replace(ROLE_HOME[profile.role]);
     } finally {
       setSubmitting(false);
     }
@@ -129,6 +153,8 @@ function LoginFlow() {
         <ThemeToggle />
       </div>
       <div id={RECAPTCHA_CONTAINER_ID} />
+
+      {step === "checking" && <Skeleton className="h-64 w-full max-w-sm rounded-2xl" />}
 
       {step === "phone" && (
         <Card className="flex w-full max-w-sm flex-col gap-6 p-6">
