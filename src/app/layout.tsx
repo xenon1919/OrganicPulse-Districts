@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Nunito, DM_Sans } from "next/font/google";
+import { Geist_Mono, Outfit, Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { RegisterSW } from "@/components/register-sw";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,18 +10,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Nunito for headings/numbers - the chunky, rounded, extra-bold weight behind
-// the Swiggy/Zomato look (big prices, ratings, headers).
-const nunito = Nunito({
-  variable: "--font-nunito",
+// Outfit for headings/numbers - a geometric grotesk with a true black weight,
+// reads as premium/confident without Nunito's rounded, playful edge.
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["700", "800", "900"],
 });
 
-// DM Sans for body copy - clean and geometric, keeps long text readable
-// next to the heavier display weights.
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+// Inter for body copy - the standard professional UI typeface, keeps long
+// text crisp and legible next to the heavier display weights.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -53,7 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistMono.variable} ${nunito.variable} ${dmSans.variable} h-full antialiased`}
+      className={`${geistMono.variable} ${outfit.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
