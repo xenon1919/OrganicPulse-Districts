@@ -1,38 +1,11 @@
 import Link from "next/link";
-import { ChevronRight, Coffee, Egg, Leaf, Package, ScanLine, Sprout } from "lucide-react";
+import { ArrowRight, Coffee, Egg, Leaf, Package } from "lucide-react";
 import { ThemeToggle } from "@/components/app/theme-toggle";
 
 const materials = [
   { label: "Calcium", icon: Egg, swatch: "bg-category-a text-category-a-foreground" },
   { label: "Nitrogen", icon: Coffee, swatch: "bg-category-b text-category-b-foreground" },
   { label: "Carbon", icon: Package, swatch: "bg-category-c text-category-c-foreground" },
-] as const;
-
-const stages = [
-  {
-    index: "01",
-    role: "household",
-    name: "Household",
-    detail: "Sort eggshells, coffee grounds, and cardboard. Log a photo-verified drop.",
-    icon: Leaf,
-    swatch: "bg-category-a text-category-a-foreground",
-  },
-  {
-    index: "02",
-    role: "partner",
-    name: "Collection partner",
-    detail: "Weigh what comes in at the hub and confirm it against the photo.",
-    icon: ScanLine,
-    swatch: "bg-category-b text-category-b-foreground",
-  },
-  {
-    index: "03",
-    role: "receiver",
-    name: "Receiver",
-    detail: "Claim nearby inventory for manure-making or terrace gardening.",
-    icon: Sprout,
-    swatch: "bg-category-c text-category-c-foreground",
-  },
 ] as const;
 
 export default function Home() {
@@ -63,8 +36,9 @@ export default function Home() {
             Someone else&apos;s harvest.
           </h1>
           <p className="text-[15px] leading-relaxed text-muted-foreground">
-            Sort it at home, get it weighed at the hub, and a neighbour turns
-            it into manure — checked at every step by Meta&apos;s SAM 3.1.
+            Sort eggshells, coffee grounds, and cardboard at home. We match it
+            with a neighbour who turns it into manure — verified at every
+            step by Meta&apos;s SAM 3.1.
           </p>
         </div>
 
@@ -82,27 +56,24 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="mt-8 flex flex-col gap-3">
-          {stages.map(({ index, role, name, detail, icon: Icon, swatch }) => (
-            <Link key={role} href={`/login?role=${role}`}>
-              <div className="relative flex items-center gap-4 overflow-hidden rounded-2xl border border-border bg-card p-4 transition-colors active:bg-muted">
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-br from-foreground/[0.04] via-transparent to-transparent"
-                />
-                <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${swatch}`}>
-                  <Icon className="h-5 w-5" />
-                </div>
-                <div className="relative flex flex-1 flex-col gap-0.5">
-                  <span className="font-mono text-[10px] text-muted-foreground">{index}</span>
-                  <span className="font-display text-base font-bold">{name}</span>
-                  <span className="text-xs leading-snug text-muted-foreground">{detail}</span>
-                </div>
-                <ChevronRight className="relative h-4 w-4 shrink-0 text-muted-foreground" />
-              </div>
-            </Link>
-          ))}
-        </div>
+        <Link
+          href="/login?role=household"
+          className="mt-8 flex items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[15px] font-bold text-primary-foreground transition-opacity active:opacity-90"
+        >
+          Get started as a household
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+
+        <p className="mt-6 px-1 text-center text-xs text-muted-foreground">
+          Run a collection hub or receive inventory?{" "}
+          <Link href="/login?role=partner" className="font-semibold text-foreground">
+            Partner login
+          </Link>{" "}
+          ·{" "}
+          <Link href="/login?role=receiver" className="font-semibold text-foreground">
+            Receiver login
+          </Link>
+        </p>
 
         <div className="mt-auto flex flex-col gap-3 pt-10">
           <p className="text-sm text-muted-foreground">
