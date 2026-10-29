@@ -1,7 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, Leaf, ScanLine, Sparkles, Sprout } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { ArrowRight, Coffee, Egg, Leaf, Package, ScanLine, Sprout } from "lucide-react";
 import { ThemeToggle } from "@/components/app/theme-toggle";
+
+const categories = [
+  { label: "Calcium", icon: Egg, bubble: "bg-category-a text-category-a-foreground" },
+  { label: "Nitrogen", icon: Coffee, bubble: "bg-category-b text-category-b-foreground" },
+  { label: "Carbon", icon: Package, bubble: "bg-category-c text-category-c-foreground" },
+] as const;
 
 const portals = [
   {
@@ -9,114 +14,102 @@ const portals = [
     title: "Household",
     description: "Log sorted dry waste, earn Green Points, track your impact.",
     icon: Leaf,
-    chipClass: "bg-category-a text-category-a-foreground",
+    bg: "bg-category-a/20",
+    border: "border-category-a",
+    iconBg: "bg-category-a text-category-a-foreground",
   },
   {
     role: "receiver",
     title: "Receiver",
     description: "Manure manufacturers & terrace gardeners claiming nearby inventory.",
     icon: Sprout,
-    chipClass: "bg-category-c text-category-c-foreground",
+    bg: "bg-category-c/20",
+    border: "border-category-c",
+    iconBg: "bg-category-c text-category-c-foreground",
   },
   {
     role: "partner",
     title: "Collection Partner",
     description: "Scan household QR passes and log verified batch weights.",
     icon: ScanLine,
-    chipClass: "bg-category-b text-category-b-foreground",
+    bg: "bg-category-b/20",
+    border: "border-category-b",
+    iconBg: "bg-category-b text-category-b-foreground",
   },
-] as const;
-
-const categoryChips = [
-  { label: "Calcium", sub: "Eggshells", className: "bg-category-a text-category-a-foreground" },
-  { label: "Nitrogen", sub: "Tea & coffee", className: "bg-category-b text-category-b-foreground" },
-  { label: "Carbon", sub: "Cardboard", className: "bg-category-c text-category-c-foreground" },
 ] as const;
 
 export default function Home() {
   return (
-    <div className="relative flex flex-1 flex-col overflow-hidden">
-      {/* Mesh-gradient hero background */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="animate-blob absolute -top-24 -left-20 h-72 w-72 rounded-full bg-primary/35 blur-3xl" />
-        <div className="animate-blob-delay absolute top-10 -right-24 h-80 w-80 rounded-full bg-accent/30 blur-3xl" />
-        <div className="animate-blob absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-category-b/25 blur-3xl" />
-      </div>
+    <div className="flex flex-1 flex-col">
+      <div className="relative overflow-hidden rounded-b-[2.5rem] bg-primary px-5 pt-6 pb-9 text-primary-foreground">
+        <div aria-hidden className="pointer-events-none absolute -top-12 -right-16 h-48 w-48 rounded-full bg-white/10" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-12 h-44 w-44 rounded-full bg-black/10" />
 
-      <div className="absolute top-5 right-5 z-10">
-        <ThemeToggle />
-      </div>
-
-      <div className="relative z-[1] flex w-full flex-1 flex-col items-center px-5 pt-16 pb-10">
-        <div className="flex w-full max-w-sm flex-col gap-10">
-          <div className="animate-fade-up flex flex-col items-center gap-5 text-center">
-            <div className="flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-3 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur">
-              <Sparkles className="h-3 w-3 text-accent" />
-              Built with Meta SAM 3.1 &amp; Muse Spark
+        <div className="relative z-[1] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/15">
+              <Leaf className="h-5 w-5" />
             </div>
-
-            <h1 className="hero-gradient-text font-display text-[2.75rem] leading-[1.05] font-black tracking-tight">
-              Turn your trash
-              <br />
-              into someone&apos;s
-              <br />
-              treasure.
-            </h1>
-
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              A circular-economy marketplace connecting households, local
-              organic manure manufacturers, and terrace gardeners—one sorted
-              caddy at a time.
-            </p>
+            <span className="font-display text-base font-extrabold tracking-tight">OrganicPulse</span>
           </div>
+          <ThemeToggle />
+        </div>
 
-          <div
-            className="animate-fade-up flex justify-center gap-2"
-            style={{ animationDelay: "120ms" }}
-          >
-            {categoryChips.map((c) => (
-              <div
-                key={c.label}
-                className="flex flex-1 flex-col items-center gap-0.5 rounded-2xl border border-border bg-card/70 px-2 py-2.5 text-center backdrop-blur"
-              >
-                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${c.className}`}>
-                  {c.label}
-                </span>
-                <span className="text-[10px] text-muted-foreground">{c.sub}</span>
+        <div className="relative z-[1] mt-8 flex flex-col gap-3">
+          <span className="w-fit rounded-full bg-primary-foreground/15 px-3 py-1 text-[11px] font-bold">
+            Powered by Meta SAM 3.1 &amp; Muse Spark
+          </span>
+          <h1 className="font-display text-[2.4rem] leading-[1.05] font-black tracking-tight">
+            Turn your trash into someone&apos;s treasure.
+          </h1>
+          <p className="text-sm leading-relaxed font-medium text-primary-foreground/85">
+            Sort it, scan it, and a neighbour turns it into manure or compost
+            — you earn Green Points for every kg.
+          </p>
+        </div>
+
+        <div className="relative z-[1] mt-7 flex gap-3">
+          {categories.map(({ label, icon: Icon, bubble }) => (
+            <div key={label} className="flex flex-1 flex-col items-center gap-1.5">
+              <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${bubble} shadow-[3px_3px_0_0_rgba(0,0,0,0.18)]`}>
+                <Icon className="h-6 w-6" />
               </div>
-            ))}
-          </div>
+              <span className="text-[11px] font-bold">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-          <div className="flex flex-col gap-3">
-            {portals.map(({ role, title, description, icon: Icon, chipClass }, i) => (
-              <Link
-                key={role}
-                href={`/login?role=${role}`}
-                className="animate-fade-up"
-                style={{ animationDelay: `${200 + i * 90}ms` }}
-              >
-                <Card className="group flex flex-row items-center gap-4 border-border/80 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md active:translate-y-0">
-                  <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${chipClass}`}>
-                    <Icon className="h-5 w-5" />
+      <div className="flex w-full flex-1 flex-col items-center px-5 py-7">
+        <div className="flex w-full max-w-sm flex-col gap-4">
+          <p className="px-1 font-display text-xs font-extrabold tracking-wide text-muted-foreground uppercase">
+            I am a...
+          </p>
+
+          <div className="flex flex-col gap-4">
+            {portals.map(({ role, title, description, icon: Icon, bg, border, iconBg }) => (
+              <Link key={role} href={`/login?role=${role}`}>
+                <div
+                  className={`flex items-center gap-4 rounded-3xl border-2 ${border} ${bg} p-4 shadow-[4px_4px_0_0_var(--foreground)] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none`}
+                >
+                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${iconBg}`}>
+                    <Icon className="h-6 w-6" />
                   </div>
                   <div className="flex flex-1 flex-col gap-0.5">
-                    <span className="font-display text-sm font-bold">{title}</span>
-                    <span className="text-xs leading-snug text-muted-foreground">
+                    <span className="font-display text-base font-extrabold">{title}</span>
+                    <span className="text-xs leading-snug font-medium text-foreground/70">
                       {description}
                     </span>
                   </div>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
-                </Card>
+                  <ArrowRight className="h-5 w-5 shrink-0 text-foreground/50" />
+                </div>
               </Link>
             ))}
           </div>
 
-          <p
-            className="animate-fade-up text-center text-xs text-muted-foreground"
-            style={{ animationDelay: "480ms" }}
-          >
+          <p className="pt-2 text-center text-xs font-medium text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-accent">
+            <Link href="/login" className="font-bold text-accent">
               Log in
             </Link>
           </p>
