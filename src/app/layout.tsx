@@ -1,32 +1,29 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Archivo, Inter, IBM_Plex_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { RegisterSW } from "@/components/register-sw";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
-// Fraunces for the hero headline and big stat numbers only - a soft, warm
-// serif with genuine organic character (its WONK/opsz axes were built for
-// exactly this: material, grown, unhurried - not another geometric grotesk).
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// Archivo for display - a confident, blocky grotesk with a true black
+// weight and a condensed width axis, for the premium-dark/bold-accent
+// fintech look (CRED) this product is now modeled on.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
-  weight: "variable",
-  axes: ["opsz", "WONK"],
+  weight: ["600", "700", "900"],
 });
 
-// IBM Plex Sans for body copy - a technical-but-warm workhorse designed
-// alongside Plex Mono, so the two read as one deliberate system rather than
-// two unrelated typefaces glued together.
-const plexSans = IBM_Plex_Sans({
-  variable: "--font-plex-sans",
+// Inter for body copy - clean and neutral, lets the display weight and the
+// accent color carry the personality instead of the body text.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-// IBM Plex Mono for the app's actual data - pass codes, hub names, batch
-// weights, the AI model credit line - earned here because the product
-// really is a ledger of tracked material, not decoration.
+// IBM Plex Mono for small data tags - pass codes, hub names, the AI model
+// credit line.
 const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
@@ -50,8 +47,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F4EFE1" },
-    { media: "(prefers-color-scheme: dark)", color: "#2B2821" },
+    { media: "(prefers-color-scheme: light)", color: "#F1F1EC" },
+    { media: "(prefers-color-scheme: dark)", color: "#0C0D0B" },
   ],
 };
 
@@ -60,7 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${fraunces.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${archivo.variable} ${inter.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
