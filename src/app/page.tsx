@@ -1,117 +1,91 @@
 import Link from "next/link";
-import { ArrowRight, Coffee, Egg, Leaf, Package, ScanLine, Sprout } from "lucide-react";
+import { ChevronRight, Leaf } from "lucide-react";
 import { ThemeToggle } from "@/components/app/theme-toggle";
 
-const categories = [
-  { label: "Calcium", icon: Egg, bubble: "bg-category-a text-category-a-foreground" },
-  { label: "Nitrogen", icon: Coffee, bubble: "bg-category-b text-category-b-foreground" },
-  { label: "Carbon", icon: Package, bubble: "bg-category-c text-category-c-foreground" },
-] as const;
-
-const portals = [
+const stages = [
   {
+    index: "01",
     role: "household",
-    title: "Household",
-    description: "Log sorted dry waste, earn Green Points, track your impact.",
-    icon: Leaf,
-    bg: "bg-category-a/20",
-    border: "border-category-a",
-    iconBg: "bg-category-a text-category-a-foreground",
+    name: "Household",
+    detail: "Sort eggshells, coffee grounds, and cardboard. Log a photo-verified drop.",
+    chip: "bg-category-a text-category-a-foreground",
   },
   {
-    role: "receiver",
-    title: "Receiver",
-    description: "Manure manufacturers & terrace gardeners claiming nearby inventory.",
-    icon: Sprout,
-    bg: "bg-category-c/20",
-    border: "border-category-c",
-    iconBg: "bg-category-c text-category-c-foreground",
-  },
-  {
+    index: "02",
     role: "partner",
-    title: "Collection Partner",
-    description: "Scan household QR passes and log verified batch weights.",
-    icon: ScanLine,
-    bg: "bg-category-b/20",
-    border: "border-category-b",
-    iconBg: "bg-category-b text-category-b-foreground",
+    name: "Collection partner",
+    detail: "Weigh what comes in at the hub and confirm it against the photo.",
+    chip: "bg-category-b text-category-b-foreground",
+  },
+  {
+    index: "03",
+    role: "receiver",
+    name: "Receiver",
+    detail: "Claim nearby inventory for manure-making or terrace gardening.",
+    chip: "bg-category-c text-category-c-foreground",
   },
 ] as const;
 
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="relative overflow-hidden rounded-b-[2.5rem] bg-primary px-5 pt-6 pb-9 text-primary-foreground">
-        <div aria-hidden className="pointer-events-none absolute -top-12 -right-16 h-48 w-48 rounded-full bg-white/10" />
-        <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-12 h-44 w-44 rounded-full bg-black/10" />
-
-        <div className="relative z-[1] flex items-center justify-between">
+    <div className="flex w-full flex-1 flex-col items-center px-5 pt-6 pb-8">
+      <div className="flex w-full max-w-sm flex-1 flex-col">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/15">
-              <Leaf className="h-5 w-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <Leaf className="h-4 w-4" />
             </div>
-            <span className="font-display text-base font-extrabold tracking-tight">OrganicPulse</span>
+            <span className="font-display text-[15px] font-semibold tracking-tight">
+              OrganicPulse
+            </span>
           </div>
           <ThemeToggle />
         </div>
 
-        <div className="relative z-[1] mt-8 flex flex-col gap-3">
-          <span className="w-fit rounded-full bg-primary-foreground/15 px-3 py-1 text-[11px] font-bold">
-            Powered by Meta SAM 3.1 &amp; Muse Spark
-          </span>
-          <h1 className="font-display text-[2.4rem] leading-[1.05] font-black tracking-tight">
-            Turn your trash into someone&apos;s treasure.
+        <div className="mt-10 flex flex-col gap-4">
+          <p className="font-mono text-xs text-muted-foreground">Malkajgiri district · pilot</p>
+
+          <h1 className="font-display text-[2.1rem] leading-[1.15] font-semibold tracking-tight text-balance">
+            What your kitchen throws away still has somewhere to go.
           </h1>
-          <p className="text-sm leading-relaxed font-medium text-primary-foreground/85">
-            Sort it, scan it, and a neighbour turns it into manure or compost
-            — you earn Green Points for every kg.
+
+          <p className="text-[15px] leading-relaxed text-muted-foreground">
+            Eggshells, coffee grounds, and cardboard get sorted at home,
+            weighed at the hub, and turned into manure by someone nearby —
+            checked at every step by Meta&apos;s SAM 3.1.
           </p>
         </div>
 
-        <div className="relative z-[1] mt-7 flex gap-3">
-          {categories.map(({ label, icon: Icon, bubble }) => (
-            <div key={label} className="flex flex-1 flex-col items-center gap-1.5">
-              <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${bubble} shadow-[3px_3px_0_0_rgba(0,0,0,0.18)]`}>
-                <Icon className="h-6 w-6" />
+        <div className="mt-9 flex flex-col divide-y divide-border border-y border-border">
+          {stages.map(({ index, role, name, detail, chip }) => (
+            <Link
+              key={role}
+              href={`/login?role=${role}`}
+              className="group flex items-center gap-4 py-4 transition-colors hover:bg-muted/60 active:bg-muted"
+            >
+              <span
+                className={`font-display flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-semibold tabular-nums ${chip}`}
+              >
+                {index}
+              </span>
+              <div className="flex flex-1 flex-col gap-0.5">
+                <span className="text-[15px] font-semibold">{name}</span>
+                <span className="text-xs leading-snug text-muted-foreground">{detail}</span>
               </div>
-              <span className="text-[11px] font-bold">{label}</span>
-            </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-transform group-hover:translate-x-0.5" />
+            </Link>
           ))}
         </div>
-      </div>
 
-      <div className="flex w-full flex-1 flex-col items-center px-5 py-7">
-        <div className="flex w-full max-w-sm flex-col gap-4">
-          <p className="px-1 font-display text-xs font-extrabold tracking-wide text-muted-foreground uppercase">
-            I am a...
-          </p>
-
-          <div className="flex flex-col gap-4">
-            {portals.map(({ role, title, description, icon: Icon, bg, border, iconBg }) => (
-              <Link key={role} href={`/login?role=${role}`}>
-                <div
-                  className={`flex items-center gap-4 rounded-3xl border-2 ${border} ${bg} p-4 shadow-[4px_4px_0_0_var(--foreground)] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none`}
-                >
-                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${iconBg}`}>
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <div className="flex flex-1 flex-col gap-0.5">
-                    <span className="font-display text-base font-extrabold">{title}</span>
-                    <span className="text-xs leading-snug font-medium text-foreground/70">
-                      {description}
-                    </span>
-                  </div>
-                  <ArrowRight className="h-5 w-5 shrink-0 text-foreground/50" />
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <p className="pt-2 text-center text-xs font-medium text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="font-bold text-accent">
+        <div className="mt-auto flex flex-col gap-3 pt-10">
+          <p className="text-sm text-muted-foreground">
+            Already sorting with us?{" "}
+            <Link href="/login" className="font-semibold text-primary">
               Log in
             </Link>
+          </p>
+          <p className="font-mono text-[11px] text-muted-foreground/70">
+            verify: sam-3.1 · match: muse-spark-1.3
           </p>
         </div>
       </div>

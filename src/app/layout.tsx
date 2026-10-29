@@ -1,29 +1,36 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Outfit, Inter } from "next/font/google";
+import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { RegisterSW } from "@/components/register-sw";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Fraunces for the hero headline and big stat numbers only - a soft, warm
+// serif with genuine organic character (its WONK/opsz axes were built for
+// exactly this: material, grown, unhurried - not another geometric grotesk).
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  weight: "variable",
+  axes: ["opsz", "WONK"],
 });
 
-// Outfit for headings/numbers - a geometric grotesk with a true black weight,
-// reads as premium/confident without Nunito's rounded, playful edge.
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  weight: ["700", "800", "900"],
-});
-
-// Inter for body copy - the standard professional UI typeface, keeps long
-// text crisp and legible next to the heavier display weights.
-const inter = Inter({
-  variable: "--font-inter",
+// IBM Plex Sans for body copy - a technical-but-warm workhorse designed
+// alongside Plex Mono, so the two read as one deliberate system rather than
+// two unrelated typefaces glued together.
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+// IBM Plex Mono for the app's actual data - pass codes, hub names, batch
+// weights, the AI model credit line - earned here because the product
+// really is a ledger of tracked material, not decoration.
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -43,8 +50,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAFBF8" },
-    { media: "(prefers-color-scheme: dark)", color: "#282b2e" },
+    { media: "(prefers-color-scheme: light)", color: "#F4EFE1" },
+    { media: "(prefers-color-scheme: dark)", color: "#2B2821" },
   ],
 };
 
@@ -53,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistMono.variable} ${outfit.variable} ${inter.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
