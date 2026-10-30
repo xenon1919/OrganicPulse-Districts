@@ -171,6 +171,7 @@ export default function MarketplacePage() {
       {listings.length === 0 && (
         <EmptyState
           icon={Store}
+          illustration="empty-bowl"
           title="No open inventory right now"
           description="New batches appear here as soon as households drop off at a hub near you."
         />

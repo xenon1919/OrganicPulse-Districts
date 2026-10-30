@@ -57,6 +57,7 @@ export default function PartnerHistoryPage() {
       {collections.length === 0 && (
         <EmptyState
           icon={History}
+          illustration="empty-bowl"
           title="No collections yet"
           description="Logged drop-offs at your hub will show up here as they come in."
         />

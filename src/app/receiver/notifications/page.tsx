@@ -57,6 +57,7 @@ export default function NotificationsPage() {
       {matches.length === 0 && (
         <EmptyState
           icon={Bell}
+          illustration="empty-notifications"
           title="No matches yet"
           description="Active demand requests get matched automatically as households drop off nearby."
         />

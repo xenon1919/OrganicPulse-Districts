@@ -32,3 +32,29 @@ export function BowlIllustration({ category, className = "h-16 w-16" }: { catego
     />
   );
 }
+
+export type EmptyIllustrationName = "empty-bowl" | "empty-notifications";
+
+const EMPTY_ILLUSTRATION_IMAGE: Record<EmptyIllustrationName, string> = {
+  "empty-bowl": "/illustrations/empty-bowl-v2.png",
+  "empty-notifications": "/illustrations/empty-notifications-v2.png",
+};
+
+/** Used by EmptyState for a friendlier "nothing here yet" visual than a bare icon. */
+export function EmptyStateIllustration({
+  name,
+  className = "h-20 w-20",
+}: {
+  name: EmptyIllustrationName;
+  className?: string;
+}) {
+  return (
+    <Image
+      src={EMPTY_ILLUSTRATION_IMAGE[name]}
+      alt=""
+      width={160}
+      height={160}
+      className={`${className} object-contain`}
+    />
+  );
+}
