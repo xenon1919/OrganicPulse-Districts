@@ -56,7 +56,7 @@ function RequirementDialog({ receiverId, receiverName }: { receiverId: string; r
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline" className="gap-1.5">
+        <Button size="sm" variant="outline" className="w-full gap-1.5">
           <Plus className="h-3.5 w-3.5" />
           Place a requirement
         </Button>
@@ -160,9 +160,9 @@ export default function MarketplacePage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
-          <h1 className="font-display text-xl font-extrabold">Resource marketplace</h1>
+          <h1 className="font-display text-xl font-extrabold">Marketplace</h1>
           <p className="text-sm text-muted-foreground">Live inventory from nearby hubs.</p>
         </div>
         <RequirementDialog receiverId={profile.id} receiverName={profile.name} />

@@ -30,7 +30,7 @@ export function ProfileView({ profile, children }: { profile: UserProfile; child
 
   async function handleLogout() {
     await logOut();
-    router.replace("/login");
+    router.replace("/");
   }
 
   return (

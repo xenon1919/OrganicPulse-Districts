@@ -89,9 +89,9 @@ export function OtpInput({
             aria-label={`Digit ${i + 1} of ${length}`}
             className={`h-10 w-9 shrink-0 rounded-lg border text-center text-base font-semibold tabular-nums outline-none transition-all duration-200 ease-out ${
               filled
-                ? "scale-105 border-accent bg-accent/10 text-foreground"
+                ? "scale-105 border-primary bg-primary/10 text-foreground"
                 : "scale-100 border-input bg-transparent text-foreground"
-            } focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/50 disabled:opacity-50`}
+            } focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/50 disabled:opacity-50`}
           />
         );
       })}

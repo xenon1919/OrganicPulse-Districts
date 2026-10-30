@@ -204,7 +204,7 @@ function LoginFlow() {
             </Button>
             <button
               type="button"
-              className="text-xs font-medium text-accent"
+              className="text-xs font-medium text-primary"
               onClick={() => {
                 setStep("phone");
                 setOtp("");
@@ -230,7 +230,7 @@ function LoginFlow() {
                 type="button"
                 onClick={() => setRole(value)}
                 className={`flex flex-1 flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-xs transition-colors ${
-                  role === value ? "border-accent bg-accent/10 text-accent" : "border-border text-muted-foreground"
+                  role === value ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
                 }`}
               >
                 <Icon className="h-4 w-4" />

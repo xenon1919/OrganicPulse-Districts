@@ -23,7 +23,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
               key={href}
               href={href}
               className={`flex flex-1 flex-col items-center gap-1 rounded-lg px-2 py-2 text-xs transition-colors ${
-                active ? "text-accent" : "text-muted-foreground hover:text-foreground"
+                active ? "text-primary" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon className="h-5 w-5" />

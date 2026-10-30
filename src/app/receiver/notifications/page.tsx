@@ -72,7 +72,7 @@ export default function NotificationsPage() {
             <span className="text-xs text-muted-foreground">{m.hubName}</span>
 
             {m.rationale && (
-              <div className="flex gap-2 rounded-lg bg-accent/10 p-3 text-xs text-accent">
+              <div className="flex gap-2 rounded-lg bg-primary/10 p-3 text-xs text-primary">
                 <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 <span className="leading-relaxed">{m.rationale}</span>
               </div>

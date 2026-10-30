@@ -48,7 +48,7 @@ export default function PartnerHistoryPage() {
           <span className="text-xs leading-snug text-muted-foreground">deliveries done</span>
         </Card>
         <Card className="flex flex-col gap-1.5 p-4">
-          <Package className="h-4 w-4 text-accent" />
+          <Package className="h-4 w-4 text-primary" />
           <span className="tabular-stat font-display text-2xl font-black">{totalContributions}</span>
           <span className="text-xs leading-snug text-muted-foreground">contributions collected</span>
         </Card>

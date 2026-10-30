@@ -41,7 +41,7 @@ export default function HouseholdProfilePage() {
           <span className="text-xs leading-snug text-muted-foreground">Green Points · {stats.tier}</span>
         </Card>
         <Card className="flex flex-col gap-1.5 p-4">
-          <TreeDeciduous className="h-4 w-4 text-accent" />
+          <TreeDeciduous className="h-4 w-4 text-primary" />
           <span className="tabular-stat font-display text-2xl font-black">{stats.totalContributions}</span>
           <span className="text-xs leading-snug text-muted-foreground">total contributions, all-time</span>
         </Card>

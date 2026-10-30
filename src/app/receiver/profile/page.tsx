@@ -32,7 +32,7 @@ export default function ReceiverProfilePage() {
     <ProfileView profile={profile}>
       {profile.receiverType && (
         <Card className="flex flex-row items-center gap-3 p-4">
-          <Package className="h-4 w-4 shrink-0 text-accent" />
+          <Package className="h-4 w-4 shrink-0 text-primary" />
           <div className="flex flex-col">
             <span className="text-sm font-medium">{RECEIVER_TYPE_LABEL[profile.receiverType]}</span>
             <span className="text-xs text-muted-foreground">Matched against this receiver type</span>

@@ -100,7 +100,7 @@ export default function LogCollectionPage() {
                   <span className="text-sm font-medium">{meta.label}</span>
                   <span className="text-xs text-muted-foreground">Tap to add</span>
                 </div>
-                <span className="font-display tabular-stat text-lg font-black text-accent">
+                <span className="font-display tabular-stat text-lg font-black text-primary">
                   ×{counts[category]}
                 </span>
               </Card>
@@ -136,7 +136,7 @@ export default function LogCollectionPage() {
           onChange={handlePhoto}
         />
         {decl.photoUrl && !uploading && (
-          <button onClick={() => fileInputRef.current?.click()} className="text-xs font-medium text-accent">
+          <button onClick={() => fileInputRef.current?.click()} className="text-xs font-medium text-primary">
             Retake photo
           </button>
         )}
