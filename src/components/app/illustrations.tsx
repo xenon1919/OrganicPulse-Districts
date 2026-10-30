@@ -1,6 +1,19 @@
 import Image from "next/image";
 import type { Category } from "@/types/database";
 
+/** The app's brand mark - a leaf fused with a circular-economy arrow loop. */
+export function Logo({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <Image
+      src="/illustrations/logo-mark-v2.png"
+      alt="OrganicPulse"
+      width={64}
+      height={64}
+      className={`${className} object-contain`}
+    />
+  );
+}
+
 /** A small sprout growing from cupped hands - used on the household greeting banner. */
 export function SproutIllustration({ className = "h-16 w-16" }: { className?: string }) {
   return (

@@ -1,20 +1,22 @@
 import Link from "next/link";
-import { ArrowRight, Coffee, Egg, Leaf, Package } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { ThemeToggle } from "@/components/app/theme-toggle";
+import { Logo, SproutIllustration, BowlIllustration } from "@/components/app/illustrations";
+import type { Category } from "@/types/database";
 
-const materials = [
-  { label: "Calcium", icon: Egg, swatch: "bg-category-a text-category-a-foreground" },
-  { label: "Nitrogen", icon: Coffee, swatch: "bg-category-b text-category-b-foreground" },
-  { label: "Carbon", icon: Package, swatch: "bg-category-c text-category-c-foreground" },
-] as const;
+const materials: { category: Category; label: string }[] = [
+  { category: "A", label: "Calcium" },
+  { category: "B", label: "Nitrogen" },
+  { category: "C", label: "Carbon" },
+];
 
 export default function Home() {
   return (
     <div className="flex w-full flex-1 flex-col items-center bg-background px-5 pt-6 pb-8">
       <div className="flex w-full max-w-sm items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Leaf className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+            <Logo className="h-4.5 w-4.5" />
           </div>
           <span className="font-display text-[15px] font-bold tracking-tight">OrganicPulse</span>
         </div>
@@ -22,7 +24,9 @@ export default function Home() {
       </div>
 
       <div className="flex w-full max-w-sm flex-1 flex-col justify-center">
-        <div className="flex flex-col gap-3">
+        <SproutIllustration className="mx-auto h-20 w-20" />
+
+        <div className="mt-2 flex flex-col gap-3 text-center">
           <h1 className="font-display text-[2.3rem] leading-[1.08] font-black tracking-tight text-balance">
             Your waste.
             <br />
@@ -36,14 +40,12 @@ export default function Home() {
         </div>
 
         <div className="mt-6 flex gap-2">
-          {materials.map(({ label, icon: Icon, swatch }) => (
+          {materials.map(({ category, label }) => (
             <div
-              key={label}
-              className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl border border-border bg-card px-2 py-2"
+              key={category}
+              className="flex min-w-0 flex-1 flex-col items-center gap-1 rounded-xl border border-border bg-card px-2 py-2.5"
             >
-              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${swatch}`}>
-                <Icon className="h-3.5 w-3.5" />
-              </div>
+              <BowlIllustration category={category} className="h-9 w-9" />
               <span className="truncate text-xs font-semibold">{label}</span>
             </div>
           ))}
