@@ -35,16 +35,16 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="mt-6 flex gap-2.5">
+        <div className="mt-6 flex gap-2">
           {materials.map(({ label, icon: Icon, swatch }) => (
             <div
               key={label}
-              className="flex flex-1 items-center gap-2 rounded-xl border border-border bg-card px-2.5 py-2"
+              className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl border border-border bg-card px-2 py-2"
             >
               <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${swatch}`}>
                 <Icon className="h-3.5 w-3.5" />
               </div>
-              <span className="text-xs font-semibold">{label}</span>
+              <span className="truncate text-xs font-semibold">{label}</span>
             </div>
           ))}
         </div>

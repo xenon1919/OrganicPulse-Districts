@@ -10,6 +10,24 @@ export const CATEGORY_META: Record<
   C: { label: "Carbon—Cardboard", short: "Carbon", icon: Package, bg: "bg-category-c", fg: "text-category-c-foreground" },
 };
 
+export const CATEGORY_GUIDE: Record<Category, { title: string; description: string; rules: string[] }> = {
+  A: {
+    title: "Calcium & Minerals",
+    description: "Clean, sun-dried eggshells.",
+    rules: ["No food residue", "Completely dry", "No plastic or mixed waste"],
+  },
+  B: {
+    title: "Nitrogen & Activators",
+    description: "Sun-dried coffee grounds and spent tea leaves.",
+    rules: ["No mold or moisture", "No additives (milk, sugar, etc.)", "Completely dry"],
+  },
+  C: {
+    title: "Dry Carbon",
+    description: "Shredded cardboard and clean paper scraps.",
+    rules: ["Clean and uncoated", "No plastic or glossy paper", "Completely dry"],
+  },
+};
+
 export function CategoryBadge({ category, className = "" }: { category: Category; className?: string }) {
   const meta = CATEGORY_META[category];
   const Icon = meta.icon;

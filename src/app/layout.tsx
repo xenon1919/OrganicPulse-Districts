@@ -48,8 +48,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F1F1EC" },
-    { media: "(prefers-color-scheme: dark)", color: "#0C0D0B" },
+    { media: "(prefers-color-scheme: light)", color: "#F6FAF5" },
+    { media: "(prefers-color-scheme: dark)", color: "#182A1E" },
   ],
 };
 
@@ -61,7 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${bricolage.variable} ${inter.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
           <Toaster richColors position="top-center" theme="system" />
           <RegisterSW />
