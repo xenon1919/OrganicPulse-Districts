@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  addDoc,
   collection,
   doc,
   getDoc,
@@ -13,6 +14,26 @@ import {
 } from "firebase/firestore";
 import { getDb } from "@/lib/firebase/client";
 import type { Category, InventoryBatch, Match, MatchStatus } from "@/types/database";
+
+/**
+ * Lets a receiver proactively request a category/amount instead of only
+ * claiming whatever's already in the marketplace - the matching agent picks
+ * it up on the next collection event just like any other active demand.
+ */
+export async function createDemandRequest(
+  receiverId: string,
+  receiverName: string,
+  category: Category,
+  desiredKg: number
+): Promise<void> {
+  await addDoc(collection(getDb(), "demandRequests"), {
+    receiverId,
+    receiverName,
+    category,
+    desiredKg,
+    status: "active",
+  });
+}
 
 export interface InventoryListing {
   batchId: string;

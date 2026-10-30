@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingState } from "@/components/app/loading-state";
 import { CATEGORY_META } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
-import { getCaddyDeclaration, tapCategory, attachCaddyPhoto } from "@/lib/data/household";
+import { getCaddyDeclaration, tapCategory, attachCaddyPhoto, TAP_INCREMENT_KG } from "@/lib/data/household";
 import type { CaddyDeclaration, Category } from "@/types/database";
 
 const CATEGORIES: Category[] = ["A", "B", "C"];
@@ -31,7 +31,7 @@ export default function LogCollectionPage() {
     try {
       const updated = await tapCategory(profile.id, category);
       setDecl(updated);
-      toast.success(`Logged +0.1kg ${CATEGORY_META[category].short}`);
+      toast.success(`Added to your ${CATEGORY_META[category].short} caddy`);
     } catch {
       toast.error("Couldn't save that—check your connection and try again.");
     }
@@ -72,7 +72,12 @@ export default function LogCollectionPage() {
     B: decl.categoryBKg,
     C: decl.categoryCKg,
   };
-  const total = weights.A + weights.B + weights.C;
+  const counts: Record<Category, number> = {
+    A: Math.round(weights.A / TAP_INCREMENT_KG),
+    B: Math.round(weights.B / TAP_INCREMENT_KG),
+    C: Math.round(weights.C / TAP_INCREMENT_KG),
+  };
+  const totalCount = counts.A + counts.B + counts.C;
 
   return (
     <div className="flex flex-col gap-6">
@@ -96,7 +101,7 @@ export default function LogCollectionPage() {
                   <span className="text-xs text-muted-foreground">Tap to add</span>
                 </div>
                 <span className="font-display tabular-stat text-lg font-black text-accent">
-                  {weights[category].toFixed(1)}kg
+                  ×{counts[category]}
                 </span>
               </Card>
             </button>
@@ -138,7 +143,7 @@ export default function LogCollectionPage() {
       </Card>
 
       <p className="text-center text-xs text-muted-foreground">
-        {total.toFixed(1)}kg logged so far—bring it to your hub&rsquo;s next collection day.
+        {totalCount} item{totalCount === 1 ? "" : "s"} logged so far—bring it to your hub&rsquo;s next collection day.
       </p>
     </div>
   );

@@ -42,8 +42,8 @@ export default function HouseholdProfilePage() {
         </Card>
         <Card className="flex flex-col gap-1.5 p-4">
           <TreeDeciduous className="h-4 w-4 text-accent" />
-          <span className="tabular-stat font-display text-2xl font-black">{stats.collectionsCount}</span>
-          <span className="text-xs leading-snug text-muted-foreground">collections logged all-time</span>
+          <span className="tabular-stat font-display text-2xl font-black">{stats.totalContributions}</span>
+          <span className="text-xs leading-snug text-muted-foreground">total contributions, all-time</span>
         </Card>
       </div>
     </ProfileView>

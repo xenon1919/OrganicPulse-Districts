@@ -2,15 +2,126 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { MapPin, Store } from "lucide-react";
+import { MapPin, Plus, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { LoadingState } from "@/components/app/loading-state";
 import { EmptyState } from "@/components/app/empty-state";
-import { CategoryBadge } from "@/components/app/category-badge";
+import { CategoryBadge, CATEGORY_META } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
-import { subscribeToInventory, claimBatchDirectly, type InventoryListing } from "@/lib/data/receiver";
+import {
+  subscribeToInventory,
+  claimBatchDirectly,
+  createDemandRequest,
+  type InventoryListing,
+} from "@/lib/data/receiver";
+import type { Category } from "@/types/database";
+
+const CATEGORIES: Category[] = ["A", "B", "C"];
+
+function RequirementDialog({ receiverId, receiverName }: { receiverId: string; receiverName: string }) {
+  const [open, setOpen] = useState(false);
+  const [category, setCategory] = useState<Category>("A");
+  const [desiredKg, setDesiredKg] = useState("5");
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSubmit() {
+    const kg = Number(desiredKg);
+    if (!kg || kg <= 0) return;
+    setSubmitting(true);
+    try {
+      await createDemandRequest(receiverId, receiverName, category, kg);
+      toast.success("Requirement placed—we'll match you when it's available.");
+      setOpen(false);
+      setDesiredKg("5");
+    } catch {
+      toast.error("Couldn't place that—check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline" className="gap-1.5">
+          <Plus className="h-3.5 w-3.5" />
+          Place a requirement
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Place a requirement</DialogTitle>
+          <DialogDescription>
+            Tell us what you need—you&rsquo;ll get matched automatically as households drop it off.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label>Category</Label>
+            <div className="flex gap-2">
+              {CATEGORIES.map((cat) => {
+                const meta = CATEGORY_META[cat];
+                const Icon = meta.icon;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setCategory(cat)}
+                    className={`flex flex-1 flex-col items-center gap-1 rounded-xl border p-2.5 transition-colors ${
+                      category === cat ? "border-primary bg-primary/10" : "border-border"
+                    }`}
+                  >
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${meta.bg}`}>
+                      <Icon className={`h-4 w-4 ${meta.fg}`} />
+                    </div>
+                    <span className="text-xs font-medium">{meta.short}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="desired-kg">Amount needed (kg)</Label>
+            <Input
+              id="desired-kg"
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step="0.5"
+              value={desiredKg}
+              onChange={(e) => {
+                const raw = e.target.value;
+                if (raw !== "" && Number(raw) < 0) return;
+                setDesiredKg(raw);
+              }}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button onClick={handleSubmit} disabled={submitting || !Number(desiredKg)} aria-busy={submitting}>
+            {submitting ? "Placing..." : "Place requirement"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default function MarketplacePage() {
   const { profile, loading } = useRequiredProfile("receiver");
@@ -49,9 +160,12 @@ export default function MarketplacePage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <h1 className="font-display text-xl font-extrabold">Resource marketplace</h1>
-        <p className="text-sm text-muted-foreground">Live inventory from nearby hubs.</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-display text-xl font-extrabold">Resource marketplace</h1>
+          <p className="text-sm text-muted-foreground">Live inventory from nearby hubs.</p>
+        </div>
+        <RequirementDialog receiverId={profile.id} receiverName={profile.name} />
       </div>
 
       {listings.length === 0 && (

@@ -89,11 +89,21 @@ export async function getImpactStats(householdId: string) {
 
   const tier = tierForPoints(points);
 
+  // "Total contributions" counts how many categories they've had picked up
+  // across all collection events (a household dropping off eggshells AND
+  // coffee grounds in one visit counts as 2) - this is what's shown to
+  // households, not a kg figure, since no one's bringing a scale door to
+  // door to weigh three categories separately.
+  const totalContributions = collections.reduce(
+    (sum, c) => sum + [c.categoryAKg, c.categoryBKg, c.categoryCKg].filter((kg) => kg > 0).length,
+    0
+  );
+
   return {
     points,
     tier: tier.name,
     nextTier: tier.next,
-    collectionsCount: collections.length,
+    totalContributions,
     carbonSavedKgThisMonth: +(recentKg * CARBON_SAVED_PER_KG).toFixed(2),
   };
 }
@@ -114,7 +124,7 @@ export async function getCaddyDeclaration(householdId: string): Promise<CaddyDec
   return snap.exists() ? (snap.data() as CaddyDeclaration) : emptyDeclaration(householdId);
 }
 
-const TAP_INCREMENT_KG = 0.1;
+export const TAP_INCREMENT_KG = 0.1;
 const CATEGORY_FIELD = { A: "categoryAKg", B: "categoryBKg", C: "categoryCKg" } as const;
 
 export async function tapCategory(householdId: string, category: Category): Promise<CaddyDeclaration> {
