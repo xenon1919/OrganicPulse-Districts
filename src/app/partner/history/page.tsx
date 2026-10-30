@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { History, Package, Truck } from "lucide-react";
+import { History, Package } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -41,18 +41,11 @@ export default function PartnerHistoryPage() {
     <div className="flex flex-col gap-4">
       <h1 className="font-display text-xl font-extrabold">Collection history</h1>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Card className="flex flex-col gap-1.5 p-4">
-          <Truck className="h-4 w-4 text-primary" />
-          <span className="tabular-stat font-display text-2xl font-black">{collections.length}</span>
-          <span className="text-xs leading-snug text-muted-foreground">deliveries done</span>
-        </Card>
-        <Card className="flex flex-col gap-1.5 p-4">
-          <Package className="h-4 w-4 text-primary" />
-          <span className="tabular-stat font-display text-2xl font-black">{totalContributions}</span>
-          <span className="text-xs leading-snug text-muted-foreground">contributions collected</span>
-        </Card>
-      </div>
+      <Card className="flex flex-col gap-1.5 p-4">
+        <Package className="h-4 w-4 text-primary" />
+        <span className="tabular-stat font-display text-2xl font-black">{totalContributions}</span>
+        <span className="text-xs leading-snug text-muted-foreground">contributions collected</span>
+      </Card>
 
       {collections.length === 0 && (
         <EmptyState
