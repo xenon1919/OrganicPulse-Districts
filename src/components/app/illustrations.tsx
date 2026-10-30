@@ -5,7 +5,7 @@ import type { Category } from "@/types/database";
 export function SproutIllustration({ className = "h-16 w-16" }: { className?: string }) {
   return (
     <Image
-      src="/illustrations/sprout-hands.png"
+      src="/illustrations/sprout-hands-v2.png"
       alt=""
       width={128}
       height={128}
@@ -15,9 +15,9 @@ export function SproutIllustration({ className = "h-16 w-16" }: { className?: st
 }
 
 const BOWL_IMAGE: Record<Category, string> = {
-  A: "/illustrations/bowl-calcium.png",
-  B: "/illustrations/bowl-nitrogen.png",
-  C: "/illustrations/bowl-carbon.png",
+  A: "/illustrations/bowl-calcium-v2.png",
+  B: "/illustrations/bowl-nitrogen-v2.png",
+  C: "/illustrations/bowl-carbon-v2.png",
 };
 
 /** A bowl holding the category's material - used on the "what can you contribute" cards. */
