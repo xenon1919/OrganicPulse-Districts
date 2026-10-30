@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronRight, Leaf, Sparkles, TreeDeciduous } from "lucide-react";
+import { ChevronRight, Leaf, RotateCw, Sparkles, TreeDeciduous } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -68,9 +68,9 @@ export default function HouseholdHomePage() {
       <Card className="flex flex-row items-center gap-3 bg-secondary/60 p-3.5">
         <SproutIllustration className="h-14 w-14 shrink-0" />
         <div className="flex flex-col gap-0.5">
-          <h1 className="font-display text-base font-bold">Hi, {profile.name.split(" ")[0]}!</h1>
+          <h1 className="font-display text-base font-bold">Hi, {profile.name.split(" ")[0]}! 🌿</h1>
           <p className="text-xs leading-snug text-muted-foreground">
-            Thank you for being part of a greener tomorrow.
+            Thank you for being a part of a greener tomorrow!
           </p>
         </div>
       </Card>
@@ -79,20 +79,18 @@ export default function HouseholdHomePage() {
         <Card className="flex flex-col gap-1 p-3">
           <div className="flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-medium">Green Points</span>
+            <span className="text-xs font-medium">Your Green Points</span>
           </div>
           <span className="tabular-stat font-display text-2xl font-black">{stats.points}</span>
-          <span className="text-[11px] leading-snug text-muted-foreground">
-            {stats.nextTier ? `${stats.nextTier.pointsAway} to ${stats.nextTier.name}` : "Highest tier reached"}
-          </span>
+          <span className="text-[11px] leading-snug text-muted-foreground">Keep contributing to earn more!</span>
         </Card>
         <Card className="flex flex-col gap-1 p-3">
           <div className="flex items-center gap-1.5">
-            <Leaf className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-medium">Contributions</span>
+            <RotateCw className="h-3.5 w-3.5 text-primary" />
+            <span className="text-xs font-medium">Total Contributions</span>
           </div>
-          <span className="tabular-stat font-display text-2xl font-black">{stats.totalContributions}</span>
-          <span className="text-[11px] leading-snug text-muted-foreground">all-time, {stats.tier} tier</span>
+          <span className="tabular-stat font-display text-2xl font-black">{stats.contributionsThisMonth}</span>
+          <span className="text-[11px] leading-snug text-muted-foreground">(This month)</span>
         </Card>
       </div>
 
@@ -106,15 +104,15 @@ export default function HouseholdHomePage() {
             icon={Leaf}
             label="Total Contributions"
             value={stats.totalContributions}
-            caption="Across all categories"
+            caption="(Across all categories)"
           />
           <ImpactRow
             icon={TreeDeciduous}
             label="CO2e Saved"
             value={`${stats.carbonSavedKgThisMonth}kg`}
-            caption="This month"
+            caption="(This month)"
           />
-          <ImpactRow icon={Sparkles} label="Current Tier" value={stats.tier} caption="Keep going!" />
+          <ImpactRow icon={Sparkles} label="Current Tier" value={stats.tier} caption="(Keep going!)" />
         </div>
       </div>
 
@@ -122,7 +120,7 @@ export default function HouseholdHomePage() {
         <div className="flex flex-col gap-0.5">
           <h2 className="font-display text-base font-bold">What can you contribute?</h2>
           <p className="text-xs text-muted-foreground">
-            Keep these 3 dry-waste categories separate, clean, and completely dry.
+            Keep these 3 dry-waste categories in separate, clean &amp; completely dry containers.
           </p>
         </div>
 

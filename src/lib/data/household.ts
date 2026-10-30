@@ -94,16 +94,18 @@ export async function getImpactStats(householdId: string) {
   // coffee grounds in one visit counts as 2) - this is what's shown to
   // households, not a kg figure, since no one's bringing a scale door to
   // door to weigh three categories separately.
-  const totalContributions = collections.reduce(
-    (sum, c) => sum + [c.categoryAKg, c.categoryBKg, c.categoryCKg].filter((kg) => kg > 0).length,
-    0
-  );
+  const countContributions = (cs: Collection[]) =>
+    cs.reduce((sum, c) => sum + [c.categoryAKg, c.categoryBKg, c.categoryCKg].filter((kg) => kg > 0).length, 0);
+
+  const totalContributions = countContributions(collections);
+  const contributionsThisMonth = countContributions(collections.filter((c) => +new Date(c.collectedAt) >= monthAgo));
 
   return {
     points,
     tier: tier.name,
     nextTier: tier.next,
     totalContributions,
+    contributionsThisMonth,
     carbonSavedKgThisMonth: +(recentKg * CARBON_SAVED_PER_KG).toFixed(2),
   };
 }
