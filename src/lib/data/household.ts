@@ -1,18 +1,8 @@
 "use client";
 
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-  orderBy,
-} from "firebase/firestore";
-import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getDb, getStorageClient } from "@/lib/firebase/client";
-import type { CaddyDeclaration, Category, Collection, Hub } from "@/types/database";
+import { collection, doc, getDoc, getDocs, query, where, orderBy } from "firebase/firestore";
+import { getDb } from "@/lib/firebase/client";
+import type { Collection, Hub } from "@/types/database";
 
 const TIERS = [
   { name: "Sprout", min: 0 },
@@ -108,54 +98,4 @@ export async function getImpactStats(householdId: string) {
     contributionsThisMonth,
     carbonSavedKgThisMonth: +(recentKg * CARBON_SAVED_PER_KG).toFixed(2),
   };
-}
-
-function emptyDeclaration(householdId: string): CaddyDeclaration {
-  return {
-    householdId,
-    categoryAKg: 0,
-    categoryBKg: 0,
-    categoryCKg: 0,
-    photoUrl: null,
-    updatedAt: new Date().toISOString(),
-  };
-}
-
-export async function getCaddyDeclaration(householdId: string): Promise<CaddyDeclaration> {
-  const snap = await getDoc(doc(getDb(), "caddyDeclarations", householdId));
-  return snap.exists() ? (snap.data() as CaddyDeclaration) : emptyDeclaration(householdId);
-}
-
-export const TAP_INCREMENT_KG = 0.1;
-const CATEGORY_FIELD = { A: "categoryAKg", B: "categoryBKg", C: "categoryCKg" } as const;
-
-export async function tapCategory(householdId: string, category: Category): Promise<CaddyDeclaration> {
-  const ref = doc(getDb(), "caddyDeclarations", householdId);
-  const snap = await getDoc(ref);
-  const current = snap.exists() ? (snap.data() as CaddyDeclaration) : emptyDeclaration(householdId);
-
-  const key = CATEGORY_FIELD[category];
-  const updated: CaddyDeclaration = {
-    ...current,
-    householdId,
-    [key]: +(current[key] + TAP_INCREMENT_KG).toFixed(2),
-    updatedAt: new Date().toISOString(),
-  };
-
-  await setDoc(ref, updated);
-  return updated;
-}
-
-export async function attachCaddyPhoto(householdId: string, file: File): Promise<CaddyDeclaration> {
-  const photoRef = storageRef(getStorageClient(), `caddy-photos/${householdId}/${Date.now()}-${file.name}`);
-  await uploadBytes(photoRef, file);
-  const photoUrl = await getDownloadURL(photoRef);
-
-  const docRef = doc(getDb(), "caddyDeclarations", householdId);
-  const snap = await getDoc(docRef);
-  const current = snap.exists() ? (snap.data() as CaddyDeclaration) : emptyDeclaration(householdId);
-  const updated: CaddyDeclaration = { ...current, householdId, photoUrl, updatedAt: new Date().toISOString() };
-
-  await setDoc(docRef, updated);
-  return updated;
 }

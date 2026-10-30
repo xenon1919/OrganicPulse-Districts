@@ -9,8 +9,8 @@ export type DemandStatus = "active" | "paused";
 export type MatchStatus = "proposed" | "claimed" | "fulfilled";
 
 // Firestore document shapes. Collection paths: users/{uid}, hubs/{id},
-// caddyDeclarations/{uid}, collections/{id}, inventoryBatches/{id},
-// demandRequests/{id}, matches/{id}, greenPointsLedger/{id}.
+// collections/{id}, inventoryBatches/{id}, demandRequests/{id},
+// matches/{id}, greenPointsLedger/{id}.
 // Display fields (hubName, receiverName, etc.) are denormalized at write
 // time since Firestore has no joins - see firestore.rules for the security
 // model.
@@ -36,15 +36,6 @@ export interface Hub {
   neighborhood: string;
   lat: number;
   lng: number;
-}
-
-export interface CaddyDeclaration {
-  householdId: string;
-  categoryAKg: number;
-  categoryBKg: number;
-  categoryCKg: number;
-  photoUrl: string | null;
-  updatedAt: string;
 }
 
 export interface SamVerification {

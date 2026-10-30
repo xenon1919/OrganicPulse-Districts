@@ -1,8 +1,9 @@
 "use client";
 
 import { collection, doc, getDoc, getDocs, query, where, orderBy } from "firebase/firestore";
-import { getDb } from "@/lib/firebase/client";
-import type { CaddyDeclaration, Collection, UserProfile } from "@/types/database";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getDb, getStorageClient } from "@/lib/firebase/client";
+import type { Category, Collection, UserProfile } from "@/types/database";
 
 export async function findHouseholdByQr(qrPayload: string): Promise<UserProfile | null> {
   // QR payload is just the household's Firebase uid.
@@ -19,16 +20,19 @@ export async function listCollectionsAtHub(hubId: string): Promise<Collection[]>
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Collection);
 }
 
-export async function getPendingCaddyFor(householdId: string): Promise<CaddyDeclaration | null> {
-  const snap = await getDoc(doc(getDb(), "caddyDeclarations", householdId));
-  return snap.exists() ? (snap.data() as CaddyDeclaration) : null;
+/** Partner takes the verification photo in person at pickup, not the household in advance. */
+export async function uploadCollectionPhoto(partnerId: string, file: File): Promise<string> {
+  const photoRef = storageRef(getStorageClient(), `collection-photos/${partnerId}/${Date.now()}-${file.name}`);
+  await uploadBytes(photoRef, file);
+  return getDownloadURL(photoRef);
 }
 
 export interface RecordCollectionInput {
   partnerId: string;
   householdId: string;
   hubId: string;
-  weights: { A: number; B: number; C: number };
+  categories: Category[];
+  photoUrl: string | null;
 }
 
 export interface RecordCollectionResult {

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { Check, CheckCircle2, ScanLine } from "lucide-react";
+import { Camera, Check, CheckCircle2, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,8 +11,8 @@ import { LoadingState } from "@/components/app/loading-state";
 import { QrScanner } from "@/components/app/qr-scanner";
 import { CATEGORY_META } from "@/components/app/category-badge";
 import { useRequiredProfile } from "@/lib/hooks/use-profile";
-import { findHouseholdByQr, getPendingCaddyFor, recordCollection } from "@/lib/data/partner";
-import type { CaddyDeclaration, Category, SamVerification, UserProfile } from "@/types/database";
+import { findHouseholdByQr, recordCollection, uploadCollectionPhoto } from "@/lib/data/partner";
+import type { Category, SamVerification, UserProfile } from "@/types/database";
 
 const CATEGORIES: Category[] = ["A", "B", "C"];
 
@@ -42,16 +42,17 @@ function ManualEntry({ onSubmit }: { onSubmit: (payload: string) => void }) {
 
 type Stage =
   | { step: "scanning" }
-  | { step: "review"; household: UserProfile; pending: CaddyDeclaration | null }
+  | { step: "review"; household: UserProfile }
   | { step: "done"; pointsAwarded: number; sam: SamVerification };
-
-const PENDING_FIELD = { A: "categoryAKg", B: "categoryBKg", C: "categoryCKg" } as const;
 
 export default function PartnerScanPage() {
   const { profile, loading } = useRequiredProfile("partner");
   const [stage, setStage] = useState<Stage>({ step: "scanning" });
   const [confirmed, setConfirmed] = useState<Record<Category, boolean>>({ A: false, B: false, C: false });
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleScan(payload: string) {
     try {
@@ -60,33 +61,31 @@ export default function PartnerScanPage() {
         toast.error("No household found for that QR code.");
         return;
       }
-      const pending = await getPendingCaddyFor(household.id);
-      setConfirmed({
-        A: (pending?.categoryAKg ?? 0) > 0,
-        B: (pending?.categoryBKg ?? 0) > 0,
-        C: (pending?.categoryCKg ?? 0) > 0,
-      });
-      setStage({ step: "review", household, pending: pending ?? null });
+      setStage({ step: "review", household });
     } catch {
       toast.error("Couldn't look up that household—check your connection and try again.");
     }
   }
 
+  function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoFile(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  }
+
   async function handleConfirm() {
     if (stage.step !== "review" || !profile) return;
-    const pending = stage.pending;
     setSubmitting(true);
     try {
-      const weights = {
-        A: confirmed.A ? (pending?.categoryAKg ?? 0) : 0,
-        B: confirmed.B ? (pending?.categoryBKg ?? 0) : 0,
-        C: confirmed.C ? (pending?.categoryCKg ?? 0) : 0,
-      };
+      const photoUrl = photoFile ? await uploadCollectionPhoto(profile.id, photoFile) : null;
+      const categories = CATEGORIES.filter((c) => confirmed[c]);
       const { pointsAwarded, collection } = await recordCollection({
         partnerId: profile.id,
         householdId: stage.household.id,
         hubId: profile.hubId ?? stage.household.hubId ?? "",
-        weights,
+        categories,
+        photoUrl,
       });
       setStage({ step: "done", pointsAwarded, sam: collection.samVerification! });
     } catch {
@@ -99,6 +98,8 @@ export default function PartnerScanPage() {
   function resetToScan() {
     setStage({ step: "scanning" });
     setConfirmed({ A: false, B: false, C: false });
+    setPhotoFile(null);
+    setPhotoPreview(null);
   }
 
   if (loading || !profile) {
@@ -137,15 +138,13 @@ export default function PartnerScanPage() {
             {CATEGORIES.map((cat) => {
               const meta = CATEGORY_META[cat];
               const Icon = meta.icon;
-              const declared = (stage.pending?.[PENDING_FIELD[cat]] ?? 0) > 0;
               const isOn = confirmed[cat];
               return (
                 <button
                   key={cat}
                   type="button"
-                  disabled={!declared}
                   onClick={() => setConfirmed((c) => ({ ...c, [cat]: !c[cat] }))}
-                  className={`flex items-center gap-3 rounded-xl border p-3 text-left transition-colors disabled:opacity-40 ${
+                  className={`flex items-center gap-3 rounded-xl border p-3 text-left transition-colors ${
                     isOn ? "border-primary bg-primary/10" : "border-border"
                   }`}
                 >
@@ -154,9 +153,7 @@ export default function PartnerScanPage() {
                   </div>
                   <div className="flex flex-1 flex-col">
                     <span className="text-sm font-medium">{meta.label}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {declared ? "Logged by the household" : "Nothing logged for this category"}
-                    </span>
+                    <span className="text-xs text-muted-foreground">Tap if this is in the caddy</span>
                   </div>
                   <div
                     className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
@@ -168,6 +165,40 @@ export default function PartnerScanPage() {
                 </button>
               );
             })}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Photo (optional, speeds up verification)</span>
+            {photoPreview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photoPreview} alt="Caddy contents" className="h-32 w-full rounded-lg object-cover" />
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex h-24 w-full flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border text-muted-foreground"
+              >
+                <Camera className="h-5 w-5" />
+                <span className="text-xs">Take a photo of the caddy</span>
+              </button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={handlePhoto}
+            />
+            {photoPreview && (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs font-medium text-primary"
+              >
+                Retake photo
+              </button>
+            )}
           </div>
 
           {(() => {

@@ -1,5 +1,5 @@
 // Clears out transactional test/debug data (collections, matches, demand
-// requests, inventory batches, green points ledger, caddy declarations) and
+// requests, inventory batches, green points ledger) and
 // renames the 3 existing demo accounts to realistic names, so the app is
 // ready to record a clean demo from. Keeps the accounts themselves (they're
 // tied to already-configured Firebase test phone numbers) and the hubs.
@@ -44,7 +44,7 @@ async function deleteAll(collectionName) {
   console.log(`${collectionName}: deleted ${snap.size} doc(s)`);
 }
 
-for (const col of ["collections", "matches", "demandRequests", "inventoryBatches", "greenPointsLedger", "caddyDeclarations"]) {
+for (const col of ["collections", "matches", "demandRequests", "inventoryBatches", "greenPointsLedger"]) {
   await deleteAll(col);
 }
 

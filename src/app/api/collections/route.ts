@@ -7,27 +7,32 @@ import type { Category, Collection } from "@/types/database";
 const POINTS_PER_KG = 15;
 const CATEGORIES: Category[] = ["A", "B", "C"];
 
+// No one's bringing a scale door to door - the partner confirms which
+// categories are present in person, and each confirmed category counts as
+// this flat amount rather than a precise weighed figure.
+const CONTRIBUTION_KG = 1;
+
 interface RequestBody {
   partnerId: string;
   householdId: string;
   hubId: string;
-  weights: { A: number; B: number; C: number };
+  categories: Category[];
+  photoUrl: string | null;
 }
 
 export async function POST(req: Request) {
   const body = (await req.json()) as RequestBody;
-  const { partnerId, householdId, hubId, weights } = body;
+  const { partnerId, householdId, hubId, categories, photoUrl } = body;
 
-  if (!partnerId || !householdId || !hubId || !weights) {
+  if (!partnerId || !householdId || !hubId || !categories?.length) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
   }
 
   const adminDb = getAdminDb();
 
-  const [householdSnap, hubSnap, caddySnap] = await Promise.all([
+  const [householdSnap, hubSnap] = await Promise.all([
     adminDb.collection("users").doc(householdId).get(),
     adminDb.collection("hubs").doc(hubId).get(),
-    adminDb.collection("caddyDeclarations").doc(householdId).get(),
   ]);
 
   if (!householdSnap.exists) {
@@ -36,14 +41,14 @@ export async function POST(req: Request) {
 
   const household = householdSnap.data()!;
   const hub = hubSnap.data();
-  const caddy = caddySnap.exists ? caddySnap.data()! : null;
 
-  const declared = {
-    A: caddy?.categoryAKg ?? weights.A,
-    B: caddy?.categoryBKg ?? weights.B,
-    C: caddy?.categoryCKg ?? weights.C,
+  const weights: Record<Category, number> = {
+    A: categories.includes("A") ? CONTRIBUTION_KG : 0,
+    B: categories.includes("B") ? CONTRIBUTION_KG : 0,
+    C: categories.includes("C") ? CONTRIBUTION_KG : 0,
   };
-  const samVerification = await verifyCaddyPhoto(declared, caddy?.photoUrl ?? null);
+
+  const samVerification = await verifyCaddyPhoto(weights, photoUrl);
 
   const totalKg = weights.A + weights.B + weights.C;
   const pointsAwarded = Math.round(totalKg * POINTS_PER_KG);
@@ -58,7 +63,7 @@ export async function POST(req: Request) {
     categoryAKg: weights.A,
     categoryBKg: weights.B,
     categoryCKg: weights.C,
-    photoUrl: caddy?.photoUrl ?? null,
+    photoUrl: photoUrl ?? null,
     samVerification,
     collectedAt,
     verifiedBy: partnerId,
@@ -66,7 +71,6 @@ export async function POST(req: Request) {
 
   const batchWrite = adminDb.batch();
   batchWrite.set(collectionRef, collectionDoc);
-  batchWrite.delete(adminDb.collection("caddyDeclarations").doc(householdId));
   batchWrite.update(adminDb.collection("users").doc(householdId), {
     greenPoints: FieldValue.increment(pointsAwarded),
   });

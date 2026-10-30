@@ -37,13 +37,6 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Any signed-in user can read (a partner looks up a household's pending
-    // caddy directly after a QR scan); only the household can write their own.
-    match /caddyDeclarations/{uid} {
-      allow read: if signedIn();
-      allow write: if signedIn() && request.auth.uid == uid;
-    }
-
     // Collections and the points ledger are only ever written by the
     // privileged API route (Admin SDK bypasses rules entirely).
     match /collections/{id} {
